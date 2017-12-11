@@ -16,4 +16,9 @@ public class Communicate {
         jsonObj.put("password", password);
 
     }
+
+
+    public void signup(String username, String password) throws JSONException {
+
+    }
 }
