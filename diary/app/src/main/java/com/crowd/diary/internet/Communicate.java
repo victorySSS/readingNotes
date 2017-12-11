@@ -19,6 +19,8 @@ public class Communicate {
 
 
     public void signup(String username, String password) throws JSONException {
-
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("username", username);
+        jsonObj.put("password", password);
     }
 }
