@@ -1,0 +1,34 @@
+2017-12-14 18:22:17$ Username: ludics
+2017-12-14 18:23:26$ Username: ludi
+2017-12-14 18:26:13$ Username: leon
+2017-12-14 18:30:11$ Username: ludics
+2017-12-14 18:46:11$ Username: ludics
+2017-12-14 18:48:38$ Username: ludics
+2017-12-14 18:52:01$ Username: myuser
+2017-12-14 18:55:47$ Username: myuser
+2017-12-14 18:55:47$ 0
+2017-12-14 18:59:57$ Username: ludi
+2017-12-14 18:59:57$ 1
+2017-12-14 18:59:57$ Failed
+2017-12-14 19:00:12$ Username: myuser
+2017-12-14 19:00:12$ 0
+2017-12-14 19:00:12$ Successfully.
+2017-12-14 19:03:54$ Username: hahaha
+2017-12-14 19:03:54$ 0
+2017-12-14 19:03:54$ Successfully.
+2017-12-14 19:33:23$ Username: ludics
+2017-12-14 19:33:23$ 1
+2017-12-14 19:33:23$ Failed
+2017-12-14 19:33:52$ Username: ludics
+2017-12-14 19:33:52$ Password error.
+2017-12-14 19:35:59$ Username: ludics
+2017-12-14 19:35:59$ Login success.
+2017-12-14 19:36:06$ Username: ludics
+2017-12-14 19:36:06$ Password error.
+2017-12-14 19:36:11$ Username: asdfa
+2017-12-14 19:36:11$ USer not exist
+2017-12-14 19:47:38$ Username: 
+2017-12-14 19:47:38$ 0
+2017-12-14 19:47:38$ Successfully.
+2017-12-14 19:49:27$ Username: 
+2017-12-14 19:49:27$ USer not exist
