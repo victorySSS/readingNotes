@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.crowd.diary.R;
 import com.crowd.diary.util.Configure;
 import com.crowd.diary.util.Util;
+import com.crowd.diary.internet.Communicate;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText nameEditText;

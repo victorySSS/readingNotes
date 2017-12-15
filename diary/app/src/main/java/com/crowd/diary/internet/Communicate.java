@@ -23,7 +23,7 @@ public class Communicate {
      * @return "Register success."
      * @throws IOException
      */
-    public String Register(String username,String password) throws IOException{
+    public String registerToServer(String username,String password) throws IOException{
         OutputStreamWriter out = null;
         BufferedReader reader = null;
         String response="";
@@ -92,7 +92,7 @@ public class Communicate {
      * @return "User not exist."
      * @throws IOException
      */
-    public String login(String username, String password) throws IOException{
+    public String loginToServer(String username, String password) throws IOException{
         OutputStreamWriter out = null;
         BufferedReader reader = null;
         String response="";
