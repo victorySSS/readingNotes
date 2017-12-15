@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
                             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
                                     socket.getOutputStream())), true);
-                            out.write("login\n");
+                            out.write("register\n");
 
                             out.write(name+"\n");
                             //out.write("perfect\n");
@@ -145,11 +145,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             while (true) {
                                 if (socket.isConnected()) {
-                                    Log.v("connect","OK");
+                                    //Log.v("connect","OK");
                                     if (!socket.isInputShutdown()) {
-                                        Log.v("stream:","OK");
+                                        //Log.v("stream:","OK");
                                         if ((content = in.readLine()) != null) {
-                                            Log.v("get:",content);
+                                            //Log.v("get:",content);
                                             //content += "\n";
                                             out.write("bye\n");
                                             out.flush();
@@ -223,11 +223,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                 while (true) {
                                     if (socket.isConnected()) {
-                                        Log.v("connect","OK");
+                                        //Log.v("connect","OK");
                                         if (!socket.isInputShutdown()) {
-                                            Log.v("stream:","OK");
+                                            //Log.v("stream:","OK");
                                             if ((content = in.readLine()) != null) {
-                                                Log.v("get:",content);
+                                               // Log.v("get:",content);
                                                 //content += "\n";
                                                 out.write("bye\n");
                                                 out.flush();
