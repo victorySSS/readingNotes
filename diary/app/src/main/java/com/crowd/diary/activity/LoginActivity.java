@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,17 @@ import com.crowd.diary.R;
 import com.crowd.diary.util.Configure;
 import com.crowd.diary.util.Util;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText nameEditText;
     private EditText passwordEditText;
@@ -27,6 +39,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText registerName;
     private EditText registerPassword;
     private SharedPreferences sharedPreferences;
+
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+    private String content;
+    private boolean checked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,17 +119,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void alertRegister(final String name, final String password) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
-        builder.setMessage("您正在设置账号，这个账号讲保护您的隐私不被其他人看到。" +
+        builder.setMessage("您正在设置账号，这个账号将保护您的隐私不被其他人看到。" +
                 "现在请点击完成结束设置，或点击取消重新设置");
         builder.setPositiveButton("完成", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("name", name);
-                editor.putString("password", password);
+                //editor.putString("password", password);
                 editor.commit();
-                registerDialog.dismiss();
-                nameEditText.setText(name);
+
+                CommThread commR=new CommThread(true,name,password);
+                commR .start();
+
+                if(commR.getResult().equals("Done")){
+                    registerDialog.dismiss();
+                    nameEditText.setText(name);
+                }
             }
         });
         builder.setNegativeButton("取消", null);
@@ -136,23 +160,66 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch ((Integer) v.getTag()) {
             case 101:
-                String loginName = nameEditText.getText().toString();
-                String loginPassword = passwordEditText.getText().toString();
+                final String loginName = nameEditText.getText().toString();
+                final String loginPassword = passwordEditText.getText().toString();
                 if ("".equals(loginName) || "".equals(loginPassword)) {
+                    //Log.v("输出","\nkk");
                     alertLoginError();
                     break;
-                } else if (sharedPreferences.getString("name", "").equals(loginName)
-                        && sharedPreferences.getString("password", "").equals(loginPassword)) {
-                    Toast.makeText(this,
-                            "验证成功!",
-                            Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.putExtra("from", Configure.FROM_LOGIN_ACTIVITY);
-                    startActivity(intent);
-                    this.finish();
-                    break;
-                } else {
-                    alertLoginError();
+                }
+                else {
+                    checked=false;
+
+                    Thread conToLogin=new Thread(){
+                        public void run(){
+                            try {
+                                socket = new Socket("123.207.97.94", 8888);
+                                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+                                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                                        socket.getOutputStream())), true);
+                                out.write("login\n");
+                                out.write(loginName+"\n");
+                                //out.write("perfect\n");
+                                out.write(loginPassword+"\n");
+                                out.flush();
+
+                                while (true) {
+                                    if (socket.isConnected()) {
+                                        if (!socket.isInputShutdown()) {
+                                            if ((content = in.readLine()) != null) {
+                                                //content += "\n";
+                                                out.write("bye\n");
+                                                out.flush();
+                                                checked=true;
+                                                break;
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    conToLogin.start();
+
+                    while (!checked);
+
+                        if ("OK".equals(content)) {
+                            Toast.makeText(this,
+                                    "验证成功!",
+                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.putExtra("from", Configure.FROM_LOGIN_ACTIVITY);
+                            startActivity(intent);
+                            this.finish();
+                            break;
+                        } else {
+                            alertLoginError();
+                        }
+                  //  }
                 }
                 break;
             case 102:
@@ -175,4 +242,62 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
     }
+
+
+
+    public class CommThread extends Thread {
+        private boolean purpose; //0 for sign in ;1 for register
+        private String name;
+        private String password;
+        private String result;
+
+        CommThread(boolean pp,String n,String p){
+            purpose=pp;
+            name=n;
+            password=p;
+            result=null;
+        }
+
+        public String getResult(){
+            return result;
+        }
+
+        public void run(){
+            try {
+                Socket s;
+                //wait(1000);
+                if (purpose) {
+                     s = new Socket("123.207.97.94", 8888);
+                }else {
+                     s = new Socket("123.207.97.94", 8887);
+                }
+
+
+                //构建IO
+                //InputStream is = s.getInputStream();
+                OutputStream os = s.getOutputStream();
+
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
+                //向服务器端发送一条消息
+                bw.write(name+"\n"+password+"\n");
+                bw.flush();
+
+                //读取服务器返回的消息
+                InputStream is = s.getInputStream();
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                result = br.readLine();
+
+                s.close();
+
+                //System.out.println("服务器："+mess);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }

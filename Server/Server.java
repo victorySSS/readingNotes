@@ -61,6 +61,8 @@ public class Server {
         private Socket socket;
         private BufferedReader in = null;
         private String msg = "";
+        private String loginName;
+        private String loginPassword;
         
         public Service(Socket socket) {
             this.socket = socket;
@@ -81,28 +83,42 @@ public class Server {
             try{
                 while(true)
                 {
-                    if((msg = in.readLine()) != null)
+                    msg=in.readLine();
+                    loginName = in.readLine();
+                    loginPassword = in.readLine();
+
+                    System.out.println(msg);
+                    System.out.println(loginName);
+                    System.out.println(loginPassword);
+
+
+
+
+                    if(msg!=null)
                     {
                         if(msg.equals("bye"))
                         {
                             System.out.println("~~~~~~~~~~~~");
                             mList.remove(socket);
                             in.close();
-                            msg = "User:" + socket.getInetAddress()  
-                                    + "quit:" +"Online nums"+mList.size();  
+                            System.out.println ( "User:" + socket.getInetAddress()  
+                                    + "quit:" +"Online nums"+mList.size());  
                             socket.close();  
                             //this.sendmsg();  
                             break;
                         }
-                        else{
-                            if(msg.equals("zxcv")){
+                        else if(msg.equals("login")){
+                            if(loginName.equals("zcc")&&loginPassword.equals("zxcv")){
+                                
                                 msg="OK\n";
                                 this.sendmsg();
                             }
                             else{
-                            msg = socket.getInetAddress() + "   say:" + msg;  
-                            //this.sendmsg(); 
-                            System.out.println(msg);
+                                msg = socket.getInetAddress() + "   say:" + msg;  
+                              //this.sendmsg(); 
+                               System.out.println(msg);
+                               msg="Wrong\n";
+                               this.sendmsg();
                             }
                         }
                     }
