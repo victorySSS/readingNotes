@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private BufferedReader in;
     private PrintWriter out;
     private String content;
-    private boolean checked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,13 +127,52 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 editor.putString("name", name);
                 //editor.putString("password", password);
                 editor.commit();
+                content=null;
 
-                CommThread commR=new CommThread(true,name,password);
-                commR .start();
+                Thread conRegister = new Thread(){
+                    public void run(){
+                        try {
+                            socket = new Socket("123.207.97.94", 8888);
+                            in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+                            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                                    socket.getOutputStream())), true);
+                            out.write("login\n");
 
-                if(commR.getResult().equals("Done")){
+                            out.write(name+"\n");
+                            //out.write("perfect\n");
+                            out.write(password+"\n");
+                            out.flush();
+
+                            while (true) {
+                                if (socket.isConnected()) {
+                                    Log.v("connect","OK");
+                                    if (!socket.isInputShutdown()) {
+                                        Log.v("stream:","OK");
+                                        if ((content = in.readLine()) != null) {
+                                            Log.v("get:",content);
+                                            //content += "\n";
+                                            out.write("bye\n");
+                                            out.flush();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                conRegister.start();
+
+                while (conRegister.getState()!=Thread.State.TERMINATED);
+                if("Done".equals(content)){
                     registerDialog.dismiss();
                     nameEditText.setText(name);
+                }
+                else{
+                    //用户名已被占用
                 }
             }
         });
@@ -168,9 +206,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     break;
                 }
                 else {
-                    checked=false;
 
-                    Thread conToLogin=new Thread(){
+                    Thread conLogin = new Thread(){
                         public void run(){
                             try {
                                 socket = new Socket("123.207.97.94", 8888);
@@ -178,6 +215,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
                                         socket.getOutputStream())), true);
                                 out.write("login\n");
+
                                 out.write(loginName+"\n");
                                 //out.write("perfect\n");
                                 out.write(loginPassword+"\n");
@@ -185,14 +223,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                 while (true) {
                                     if (socket.isConnected()) {
+                                        Log.v("connect","OK");
                                         if (!socket.isInputShutdown()) {
+                                            Log.v("stream:","OK");
                                             if ((content = in.readLine()) != null) {
+                                                Log.v("get:",content);
                                                 //content += "\n";
                                                 out.write("bye\n");
                                                 out.flush();
-                                                checked=true;
                                                 break;
-
                                             }
                                         }
                                     }
@@ -203,9 +242,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         }
                     };
-                    conToLogin.start();
+                    conLogin.start();
 
-                    while (!checked);
+                    while (conLogin.getState()!= Thread.State.TERMINATED);
+                    nameEditText.setText("get:"+content);
 
                         if ("OK".equals(content)) {
                             Toast.makeText(this,
@@ -243,61 +283,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
-
-    public class CommThread extends Thread {
-        private boolean purpose; //0 for sign in ;1 for register
-        private String name;
-        private String password;
-        private String result;
-
-        CommThread(boolean pp,String n,String p){
-            purpose=pp;
-            name=n;
-            password=p;
-            result=null;
-        }
-
-        public String getResult(){
-            return result;
-        }
-
-        public void run(){
-            try {
-                Socket s;
-                //wait(1000);
-                if (purpose) {
-                     s = new Socket("123.207.97.94", 8888);
-                }else {
-                     s = new Socket("123.207.97.94", 8887);
-                }
-
-
-                //构建IO
-                //InputStream is = s.getInputStream();
-                OutputStream os = s.getOutputStream();
-
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-                //向服务器端发送一条消息
-                bw.write(name+"\n"+password+"\n");
-                bw.flush();
-
-                //读取服务器返回的消息
-                InputStream is = s.getInputStream();
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                result = br.readLine();
-
-                s.close();
-
-                //System.out.println("服务器："+mess);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
 }
