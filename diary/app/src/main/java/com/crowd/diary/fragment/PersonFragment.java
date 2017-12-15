@@ -39,7 +39,7 @@ public class PersonFragment extends Fragment implements View.OnClickListener, Vi
         sharedPreferences = activity.getSharedPreferences("user",
                 Context.MODE_PRIVATE);
         TextView nameText = (TextView) view.findViewById(R.id.person_name);
-        nameText.setText(sharedPreferences.getString("name", "") + "简介");
+        nameText.setText("zcc" + "的个人中心");
 
         personDate = (TextView) view.findViewById(R.id.person_date);
         personJob = (TextView) view.findViewById(R.id.person_job);

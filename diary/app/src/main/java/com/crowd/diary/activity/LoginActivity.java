@@ -1,5 +1,6 @@
 package com.crowd.diary.activity;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText registerName;
     private EditText registerPassword;
     private SharedPreferences sharedPreferences;
+    private Button linktoRegisterScreenButton;
 
     private Socket socket;
     private BufferedReader in;
@@ -59,15 +61,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginButton = (Button) findViewById(R.id.login);
         loginButton.setTag(101);
         loginButton.setOnClickListener(this);
+        linktoRegisterScreenButton = (Button)findViewById(R.id.linkToRegisterScreenButton);
+        linktoRegisterScreenButton.setTag(104);
+        linktoRegisterScreenButton.setOnClickListener(this);
     }
 
     private void initData() {
         sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         String name = sharedPreferences.getString("name", "");
         String address = sharedPreferences.getString("password", "");
-        if (name.equals("") && address.equals("")) {
-            register();
-        } else {
+        if (!name.equals("") && address.equals("")) {
             nameEditText.setText(name);
         }
     }
@@ -245,7 +248,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     conLogin.start();
 
                     while (conLogin.getState()!= Thread.State.TERMINATED);
-                    nameEditText.setText("get:"+content);
+                    //nameEditText.setText("get:"+content);
 
                         if ("OK".equals(content)) {
                             Toast.makeText(this,
@@ -280,6 +283,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Toast.LENGTH_LONG).show();
                 registerDialog.dismiss();
                 break;
+            case 104:
+                register();
         }
     }
 

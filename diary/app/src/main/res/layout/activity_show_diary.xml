@@ -2,7 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/bg_login">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+
+        <Button
+            android:id="@+id/go_to_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="返回笔记列表"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="20sp"
+            android:background="@color/colorPrimary"
+            />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/show_title"
@@ -93,9 +110,4 @@
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/go_to_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="返回笔记列表" />
 </LinearLayout>
