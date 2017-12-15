@@ -78,7 +78,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void register() {
         registerDialog = new Util().getDialog(this, registerDialogView());
         registerDialog.show();
-
     }
 
     private View registerDialogView() {
@@ -119,7 +118,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void alertRegister(final String name, final String password) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setMessage("您正在设置账号，这个账号将保护您的隐私不被其他人看到。" +
                 "现在请点击完成结束设置，或点击取消重新设置");
@@ -170,12 +169,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 conRegister.start();
 
                 while (conRegister.getState()!=Thread.State.TERMINATED);
-                if("Done".equals(content)){
+                if("OK".equals(content)){
                     registerDialog.dismiss();
                     nameEditText.setText(name);
                 }
                 else{
                     //用户名已被占用
+                    builder.setMessage("用户名已存在，请重新设置！");
+                    builder.show();
                 }
             }
         });
@@ -285,6 +286,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case 104:
                 register();
+                break;
         }
     }
 
