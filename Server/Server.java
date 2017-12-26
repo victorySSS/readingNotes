@@ -26,6 +26,7 @@ public class Server {
     private List<Socket> mList = new ArrayList<Socket>();
     private ServerSocket server = null;
     private ExecutorService myExecutorService = null;
+    private List<User> mUser=new ArrayList<User>();
     
     
     public static void main(String[] args) {
@@ -89,9 +90,6 @@ public class Server {
                     // System.out.println(loginName);
                     // System.out.println(loginPassword);
                     
-                    
-                    
-                    
                     if(msg!=null)
                     {
                         if(msg.equals("bye"))
@@ -101,29 +99,57 @@ public class Server {
                             mList.remove(socket);
                             in.close();
                             System.out.println ( "User:" + socket.getInetAddress()  
-                                    + " quit" +"Online nums："+mList.size());  
+                                    + " quit" +"Online nums:"+mList.size());  
                             socket.close();  
                             //this.sendmsg();  
                             break;
                         }
                         else if(msg.equals("login")){
+                            int matchTimes=0;
+                            loginName = in.readLine();
+                            loginPassword = in.readLine();
+                            System.out.println("User Name : "+loginName);
+                            System.out.println("Password : "+loginPassword);
+                            for(int i=0;i<mUser.size();i++){
+                                if(loginName.equals(mUser.get(i).getName())){
+                                    if(mUser.get(i).isMatch(loginPassword)){
+                                        System.out.println(socket.getInetAddress() + ": Login Successful !");
+                                        this.sendmsg("OK");
+                                    }
+                                    else{
+                                        System.out.println(socket.getInetAddress() + ": Login Error - Password Wrong");
+                                        this.sendmsg("Wrong");
+                                    }
+                                matchTimes++;
+                                break;
+                                }
+                            }
+                            if(matchTimes==0){
+                                System.out.println(socket.getInetAddress() + ": Login Error - No such User");
+                                this.sendmsg("Wrong");
+                            }
+
+                        }
+                        else if(msg.equals("register")){
+                            int matchTimes=0;
                             loginName = in.readLine();
                             loginPassword = in.readLine();
                             System.out.println(loginName);
                             System.out.println(loginPassword);
-                            if(loginName.equals("zcc")&&loginPassword.equals("zxcv")){
+                            for(int i=0;i<mUser.size();i++){
+                                if(loginName.equals(mUser.get(i).getName())){
+                                    matchTimes++;
+                                    System.out.println(socket.getInetAddress() + ":Register Error - User Name has been used");
+                                    this.sendmsg("Wrong");
+                                    break;
+                                }
+                            }
+                            if(matchTimes==0){
+                                User user = new User(loginName,loginPassword);
+                                mUser.add(user);
+                                System.out.println(socket.getInetAddress() + ":Register Successful !");
                                 this.sendmsg("OK");
-                                System.out.println("OK");
                             }
-                            else{ 
-                              //this.sendmsg(); 
-                               System.out.println(socket.getInetAddress() + "   :wrong" );
-                               this.sendmsg("Wrong");
-                            }
-                        }
-                        else if(msg.equals("register")){
-                            loginName = in.readLine();
-                            loginPassword = in.readLine();
                         }
                     }
 
