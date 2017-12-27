@@ -31,20 +31,22 @@ CREATE TABLE IF NOT EXISTS `Notes`.`NoteList` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Notes`.`Note` (
   `userID` INT UNSIGNED NOT NULL,
-  `noteID` INT UNSIGNED NOT NULL,
+  `noteID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `noteAddress` VARCHAR(255) NOT NULL,
-  `createTime` DATETIME NOT NULL,
-  `totalLikes` INT UNSIGNED NOT NULL,
-  `totalComments` INT UNSIGNED NOT NULL,
+  `textAddress` VARCHAR(255) NULL,
+  `bookName` VARCHAR(100) NULL,
+  `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `totalLikes` INT UNSIGNED NOT NULL DEFAULT 0,
+  `totalComments` INT UNSIGNED NOT NULL DEFAULT 0,
   `NoteList_userID` INT UNSIGNED NOT NULL,
   `NoteList_noteID` INT UNSIGNED NOT NULL,
   `User_userID` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`noteID`),
-  INDEX `fk_Note_NoteList1_idx` (`NoteList_userID` ASC, `NoteList_noteID` ASC),
+  INDEX `fk_Note_NoteList1_idx` (`NoteList_noteID` ASC),
   INDEX `fk_Note_User1_idx` (`User_userID` ASC),
   CONSTRAINT `fk_Note_NoteList1`
-    FOREIGN KEY (`NoteList_userID` , `NoteList_noteID`)
-    REFERENCES `Notes`.`NoteList` (`userID` , `noteID`)
+    FOREIGN KEY ( `NoteList_noteID`)
+    REFERENCES `Notes`.`NoteList` ( `noteID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Note_User1`
@@ -67,10 +69,10 @@ CREATE TABLE IF NOT EXISTS `Notes`.`User` (
   `Note_userID` INT UNSIGNED NOT NULL,
   `Note_noteID` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`userID`),
-  INDEX `fk_User_Note1_idx` (`Note_userID` ASC, `Note_noteID` ASC),
+  INDEX `fk_User_Note1_idx` (`Note_noteID` ASC),
   CONSTRAINT `fk_User_Note1`
-    FOREIGN KEY (`Note_userID` , `Note_noteID`)
-    REFERENCES `Notes`.`Note` (`userID` , `noteID`)
+    FOREIGN KEY (`Note_noteID`)
+    REFERENCES `Notes`.`Note` (`noteID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
@@ -87,10 +89,10 @@ CREATE TABLE IF NOT EXISTS `Notes`.`Comment` (
   `Note_userID` INT UNSIGNED NOT NULL,
   `Note_noteID` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`noteID`),
-  INDEX `fk_Comment_Note1_idx` (`Note_userID` ASC, `Note_noteID` ASC),
+  INDEX `fk_Comment_Note1_idx` (`Note_noteID` ASC),
   CONSTRAINT `fk_Comment_Note1`
-    FOREIGN KEY (`Note_userID` , `Note_noteID`)
-    REFERENCES `Notes`.`Note` (`userID` , `noteID`)
+    FOREIGN KEY (`Note_noteID`)
+    REFERENCES `Notes`.`Note` (`noteID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
