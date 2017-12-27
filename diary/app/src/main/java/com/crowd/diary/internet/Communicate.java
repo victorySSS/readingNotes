@@ -23,7 +23,7 @@ public class Communicate {
      * @return "Register success."
      * @throws IOException
      */
-    public String Register(String username,String password) throws IOException{
+    public String register(String username,String password) throws IOException{
         OutputStreamWriter out = null;
         BufferedReader reader = null;
         String response="";
