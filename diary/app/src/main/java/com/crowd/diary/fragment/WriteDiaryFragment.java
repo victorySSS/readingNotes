@@ -1,18 +1,18 @@
 package com.crowd.diary.fragment;
 
-import android.Manifest;
+//import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+//import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
+//import android.graphics.Bitmap;
+//import android.net.Uri;
+//import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
+//import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -24,7 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import com.crowd.diary.R;
 import com.crowd.diary.activity.MainActivity;
@@ -59,16 +59,18 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
     private LocationUtil locationUtil;
     private TextView address;
     private TextView date;
-    private ImageView addContent;
+    private Button completeButton;
+//    private ImageView addContent;
     private AlertDialog addContentDialog;
-    private AlertDialog addImageDialog;
+//    private AlertDialog addImageDialog;
     private EditText title;
     private EditText textContent;
-    private ImageView image1;
-    private ImageView image2;
-    private ImageView image3;
-    private ImageView image4;
-    private int imageCount = 0;
+    private EditText textNote;
+//    private ImageView image1;
+//    private ImageView image2;
+//    private ImageView image3;
+//    private ImageView image4;
+//    private int imageCount = 0;
     private String uriList = "";
     private Diary diary;
 
@@ -114,58 +116,61 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
 
         title = (EditText) view.findViewById(R.id.title);
         textContent = (EditText) view.findViewById(R.id.text_content);
-        image1 = (ImageView) view.findViewById(R.id.image1);
-        image2 = (ImageView) view.findViewById(R.id.image2);
-        image3 = (ImageView) view.findViewById(R.id.image3);
-        image4 = (ImageView) view.findViewById(R.id.image4);
+        textNote = (EditText) view.findViewById(R.id.text_note);
+        completeButton = (Button)view.findViewById(R.id.complete);
+        completeButton.setOnClickListener(this);
+//        image1 = (ImageView) view.findViewById(R.id.image1);
+//        image2 = (ImageView) view.findViewById(R.id.image2);
+//        image3 = (ImageView) view.findViewById(R.id.image3);
+//        image4 = (ImageView) view.findViewById(R.id.image4);
 
-        addContent = (ImageView) view.findViewById(R.id.add_content);
-        addContent.setTag(201);
-        addContent.setOnClickListener(this);
+//        addContent = (ImageView) view.findViewById(R.id.add_content);
+//        addContent.setTag(201);
+//        addContent.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        Util util = new Util();
-        switch ((Integer) v.getTag()) {
-            case 201:
-                addContentDialog = util.getDialog(activity, selectTypeView());
-                addContentDialog.show();
-                break;
-            case 202:
-                addContentDialog.dismiss();
-                addImageDialog = util.getDialog(activity, selectWhichImageView());
-                addImageDialog.show();
-                break;
-            case 203:
-                addImageDialog.dismiss();
-                String[] cameraPermissions = new String[]{
-                        Manifest.permission.CAMERA};
-                boolean cameraPermissionFlag = util.checkPermission(cameraPermissions,
-                        activity);
-                if (cameraPermissionFlag) {
-                    WriteDiaryFragment.this.requestPermissions(cameraPermissions,
-                            Configure.CAMERA_PERMISSION_CODE);
-                } else {
-                    openCamera();
-                }
-                break;
-            case 204:
-                addImageDialog.dismiss();
-                String[] imagePermissions = new String[]{
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                boolean imagePermissionFlag = util.checkPermission(imagePermissions,
-                        activity);
-                if (imagePermissionFlag) {
-                    WriteDiaryFragment.this.requestPermissions(imagePermissions,
-                            Configure.IMAGE_PERMISSION_CODE);
-                } else {
-                    openImageFile();
-                }
-                break;
-            case 205:
-                addContentDialog.dismiss();
+//        Util util = new Util();
+//        switch ((Integer) v.getTag()) {
+//            case 201:
+//                addContentDialog = util.getDialog(activity, selectTypeView());
+//                addContentDialog.show();
+//                break;
+//            case 202:
+//                addContentDialog.dismiss();
+//                addImageDialog = util.getDialog(activity, selectWhichImageView());
+//                addImageDialog.show();
+//                break;
+//            case 203:
+//                addImageDialog.dismiss();
+//                String[] cameraPermissions = new String[]{
+//                        Manifest.permission.CAMERA};
+//                boolean cameraPermissionFlag = util.checkPermission(cameraPermissions,
+//                        activity);
+//                if (cameraPermissionFlag) {
+//                    WriteDiaryFragment.this.requestPermissions(cameraPermissions,
+//                            Configure.CAMERA_PERMISSION_CODE);
+//                } else {
+//                    openCamera();
+//                }
+//                break;
+//            case 204:
+//                addImageDialog.dismiss();
+//                String[] imagePermissions = new String[]{
+//                        Manifest.permission.READ_EXTERNAL_STORAGE,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE};
+//                boolean imagePermissionFlag = util.checkPermission(imagePermissions,
+//                        activity);
+//                if (imagePermissionFlag) {
+//                    WriteDiaryFragment.this.requestPermissions(imagePermissions,
+//                            Configure.IMAGE_PERMISSION_CODE);
+//                } else {
+//                    openImageFile();
+//                }
+//                break;
+//            case 205:
+//                addContentDialog.dismiss();
                 if (saveToSQLite()) {
                     Intent intent = new Intent(activity, ShowDiaryActivity.class);
                     Bundle bundle = new Bundle();
@@ -174,13 +179,14 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
                     startActivity(intent);
                     activity.finish();
                 }
-                break;
-        }
+//                break;
+//        }
     }
 
     private boolean saveToSQLite() {
         diary = new Diary();
         diary.setContent(textContent.getText().toString());
+        diary.setNote(textNote.getText().toString());
         if (title.getText().toString() == null || "".equals(title.getText().toString())) {
             diary.setTitle("无题");
         } else {
@@ -199,166 +205,166 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
         return flag;
     }
 
-    private void addImageToLinearLayout(Bitmap bitmap) {
-        switch (imageCount) {
-            case 0:
-                image1.setVisibility(View.VISIBLE);
-                image1.setImageBitmap(bitmap);
-                imageCount++;
-                break;
-            case 1:
-                image2.setVisibility(View.VISIBLE);
-                image2.setImageBitmap(bitmap);
-                imageCount++;
-                break;
-            case 2:
-                image3.setVisibility(View.VISIBLE);
-                image3.setImageBitmap(bitmap);
-                imageCount++;
-                break;
-            case 3:
-                image4.setVisibility(View.VISIBLE);
-                image4.setImageBitmap(bitmap);
-                imageCount++;
-                break;
-        }
-    }
+//    private void addImageToLinearLayout(Bitmap bitmap) {
+//        switch (imageCount) {
+//            case 0:
+//                image1.setVisibility(View.VISIBLE);
+//                image1.setImageBitmap(bitmap);
+//                imageCount++;
+//                break;
+//            case 1:
+//                image2.setVisibility(View.VISIBLE);
+//                image2.setImageBitmap(bitmap);
+//                imageCount++;
+//                break;
+//            case 2:
+//                image3.setVisibility(View.VISIBLE);
+//                image3.setImageBitmap(bitmap);
+//                imageCount++;
+//                break;
+//            case 3:
+//                image4.setVisibility(View.VISIBLE);
+//                image4.setImageBitmap(bitmap);
+//                imageCount++;
+//                break;
+//        }
+//    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(activity, "获取权限成功",
-                    Toast.LENGTH_SHORT).show();
-            switch (requestCode) {
-                case Configure.LOCATION_PERMISSION_CODE:
-                    locationUtil.getLocation(this);
-                    break;
-                case Configure.CAMERA_PERMISSION_CODE:
-                    openCamera();
-                    break;
-                case Configure.IMAGE_PERMISSION_CODE:
-                    openImageFile();
-                    break;
-            }
-        } else {
-            Toast.makeText(activity, "获取权限失败",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//            Toast.makeText(activity, "获取权限成功",
+//                    Toast.LENGTH_SHORT).show();
+//            switch (requestCode) {
+//                case Configure.LOCATION_PERMISSION_CODE:
+//                    locationUtil.getLocation(this);
+//                    break;
+//                case Configure.CAMERA_PERMISSION_CODE:
+//                    openCamera();
+//                    break;
+//                case Configure.IMAGE_PERMISSION_CODE:
+//                    openImageFile();
+//                    break;
+//            }
+//        } else {
+//            Toast.makeText(activity, "获取权限失败",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-    private void openImageFile() {
-        Intent intent = new Intent();
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        if (Build.VERSION.SDK_INT < 19) {
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-        } else {
-            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-        }
-        startActivityForResult(intent, Configure.IMAGE_ALBUM);
-    }
+//    private void openImageFile() {
+//        Intent intent = new Intent();
+//        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//        intent.setType("image/*");
+//        if (Build.VERSION.SDK_INT < 19) {
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//        } else {
+//            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+//        }
+//        startActivityForResult(intent, Configure.IMAGE_ALBUM);
+//    }
+//
+//    private void openCamera() {
+//        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+//        startActivityForResult(intent, Configure.IMAGE_CAMERA);
+//    }
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == activity.RESULT_OK) {
+//            switch (requestCode) {
+//                case Configure.IMAGE_CAMERA:
+//                    setBitmap(data, Configure.IMAGE_CAMERA);
+//                    break;
+//                case Configure.IMAGE_ALBUM:
+//                    setBitmap(data, Configure.IMAGE_ALBUM);
+//                    break;
+//            }
+//        }
+//    }
+//
+//    private void setBitmap(Intent data, int from) {
+//        Uri uri = data.getData();
+//        Bitmap bitmap = null;
+//        if (uri == null) {
+//            Bundle bundle = data.getExtras();
+//            if (bundle != null) {
+//                bitmap = (Bitmap) bundle.get("data");
+//            }
+//        } else {
+//            try {
+//                bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uri);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        try {
+//            bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), saveBitmap(bitmap));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        addImageToLinearLayout(bitmap);
+//    }
+//
+//    private Uri saveBitmap(Bitmap bitmap) {
+//        File f = new File(getContext().getFilesDir(), System.currentTimeMillis() + ".png");
+//        if (f.exists()) {
+//            f.delete();
+//        }
+//        try {
+//            FileOutputStream out = new FileOutputStream(f);
+//            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+//            out.flush();
+//            out.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        uriList += f.getPath() + ";";
+//        return Uri.fromFile(f);
+//    }
 
-    private void openCamera() {
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        startActivityForResult(intent, Configure.IMAGE_CAMERA);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == activity.RESULT_OK) {
-            switch (requestCode) {
-                case Configure.IMAGE_CAMERA:
-                    setBitmap(data, Configure.IMAGE_CAMERA);
-                    break;
-                case Configure.IMAGE_ALBUM:
-                    setBitmap(data, Configure.IMAGE_ALBUM);
-                    break;
-            }
-        }
-    }
-
-    private void setBitmap(Intent data, int from) {
-        Uri uri = data.getData();
-        Bitmap bitmap = null;
-        if (uri == null) {
-            Bundle bundle = data.getExtras();
-            if (bundle != null) {
-                bitmap = (Bitmap) bundle.get("data");
-            }
-        } else {
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), saveBitmap(bitmap));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        addImageToLinearLayout(bitmap);
-    }
-
-    private Uri saveBitmap(Bitmap bitmap) {
-        File f = new File(getContext().getFilesDir(), System.currentTimeMillis() + ".png");
-        if (f.exists()) {
-            f.delete();
-        }
-        try {
-            FileOutputStream out = new FileOutputStream(f);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-            out.flush();
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        uriList += f.getPath() + ";";
-        return Uri.fromFile(f);
-    }
-
-    private View selectTypeView() {
-        LinearLayout typeLayout = new LinearLayout(activity);
-        typeLayout.setOrientation(LinearLayout.HORIZONTAL);
-        typeLayout.setGravity(Gravity.CENTER);
-
-        if (imageCount < 4) {
-            Button iamgeButton = new Button(activity);
-            iamgeButton.setText("插入图片");
-            iamgeButton.setTag(202);
-            iamgeButton.setOnClickListener(this);
-            typeLayout.addView(iamgeButton);
-        }
-
-        Button complete = new Button(activity);
-        complete.setText("完成笔记");
-        complete.setTag(205);
-        complete.setOnClickListener(this);
-        typeLayout.addView(complete);
-        return typeLayout;
-    }
+//    private View selectTypeView() {
+//        LinearLayout typeLayout = new LinearLayout(activity);
+//        typeLayout.setOrientation(LinearLayout.HORIZONTAL);
+//        typeLayout.setGravity(Gravity.CENTER);
+//
+////        if (imageCount < 4) {
+////            Button iamgeButton = new Button(activity);
+////            iamgeButton.setText("插入图片");
+////            iamgeButton.setTag(202);
+////            iamgeButton.setOnClickListener(this);
+////            typeLayout.addView(iamgeButton);
+////        }
+//
+//        Button complete = new Button(activity);
+//        complete.setText("完成笔记");
+//        complete.setTag(205);
+//        complete.setOnClickListener(this);
+//        typeLayout.addView(complete);
+//        return typeLayout;
+//    }
 
 
-    private View selectWhichImageView() {
-        LinearLayout typeLayout = new LinearLayout(activity);
-        typeLayout.setOrientation(LinearLayout.HORIZONTAL);
-        typeLayout.setGravity(Gravity.CENTER);
-
-        Button textButton = new Button(activity);
-        textButton.setText("从相机获取");
-        textButton.setTag(203);
-        textButton.setOnClickListener(this);
-        Button iamgeButton = new Button(activity);
-        iamgeButton.setText("从相册获取");
-        iamgeButton.setTag(204);
-        iamgeButton.setOnClickListener(this);
-
-        typeLayout.addView(textButton);
-        typeLayout.addView(iamgeButton);
-        return typeLayout;
-    }
+//    private View selectWhichImageView() {
+//        LinearLayout typeLayout = new LinearLayout(activity);
+//        typeLayout.setOrientation(LinearLayout.HORIZONTAL);
+//        typeLayout.setGravity(Gravity.CENTER);
+//
+//        Button textButton = new Button(activity);
+//        textButton.setText("从相机获取");
+//        textButton.setTag(203);
+//        textButton.setOnClickListener(this);
+//        Button iamgeButton = new Button(activity);
+//        iamgeButton.setText("从相册获取");
+//        iamgeButton.setTag(204);
+//        iamgeButton.setOnClickListener(this);
+//
+//        typeLayout.addView(textButton);
+//        typeLayout.addView(iamgeButton);
+//        return typeLayout;
+//    }
 }

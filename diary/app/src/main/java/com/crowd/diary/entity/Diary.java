@@ -3,6 +3,7 @@ package com.crowd.diary.entity;
 import java.io.Serializable;
 
 public class Diary implements Serializable {
+    private int userId;
     private int diaryId;
     private String author;
     private String title;
@@ -10,6 +11,11 @@ public class Diary implements Serializable {
     private String address;
     private String uri;
     private String content;
+    private String note;
+
+    public int getUserId(){ return userId; }
+
+    public void setUserId( int userId){ this.userId= userId; }
 
     public int getDiaryId() {
         return diaryId;
@@ -66,4 +72,8 @@ public class Diary implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getNote(){return note;}
+
+    public void setNote(String note){ this.note = note;}
 }

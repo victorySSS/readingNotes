@@ -24,6 +24,7 @@ public class DiaryDao {
         contentValues.put("address", diary.getAddress());
         contentValues.put("uri", diary.getUri());
         contentValues.put("content", diary.getContent());
+        contentValues.put("note",diary.getNote());
         long insertResult = db.insert("diary", null, contentValues);
         if (insertResult == -1) {
             return false;

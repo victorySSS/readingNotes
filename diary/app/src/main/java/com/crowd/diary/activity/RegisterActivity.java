@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.crowd.diary.R;
+import com.crowd.diary.internet.Communicate;
 import com.crowd.diary.util.Configure;
 
 import java.io.BufferedReader;
@@ -25,10 +26,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText registerNameEditText;
     private EditText registerPasswordEditText;
 
-    private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
-    private String content;
+//    private Socket socket;
+//    private BufferedReader in;
+//    private PrintWriter out;
+    private String result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,32 +62,34 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     Thread conLogin = new Thread(){
                         public void run(){
                             try {
-                                socket = new Socket("123.207.97.94", 8888);
-                                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-                                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-                                        socket.getOutputStream())), true);
-                                out.write("login\n");
-
-                                out.write(registerName+"\n");
-                                //out.write("perfect\n");
-                                out.write(registerPassword+"\n");
-                                out.flush();
-
-                                while (true) {
-                                    if (socket.isConnected()) {
-                                        //Log.v("connect","OK");
-                                        if (!socket.isInputShutdown()) {
-                                            //Log.v("stream:","OK");
-                                            if ((content = in.readLine()) != null) {
-                                                // Log.v("get:",content);
-                                                //content += "\n";
-                                                out.write("bye\n");
-                                                out.flush();
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
+//                                socket = new Socket("123.207.97.94", 8888);
+//                                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+//                                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+//                                        socket.getOutputStream())), true);
+//                                out.write("login\n");
+//
+//                                out.write(registerName+"\n");
+//                                //out.write("perfect\n");
+//                                out.write(registerPassword+"\n");
+//                                out.flush();
+//
+//                                while (true) {
+//                                    if (socket.isConnected()) {
+//                                        //Log.v("connect","OK");
+//                                        if (!socket.isInputShutdown()) {
+//                                            //Log.v("stream:","OK");
+//                                            if ((content = in.readLine()) != null) {
+//                                                // Log.v("get:",content);
+//                                                //content += "\n";
+//                                                out.write("bye\n");
+//                                                out.flush();
+//                                                break;
+//                                            }
+//                                        }
+//                                    }
+//                                }
+                                Communicate communicate = new Communicate();
+                                result = communicate.registerToServer(registerName,registerPassword);
 
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -98,18 +101,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     while (conLogin.getState()!= Thread.State.TERMINATED);
                     //nameEditText.setText("get:"+content);
 
-                    if ("OK".equals(content)) {
+                    if ("Register success.".equals(result)) {
                         Toast.makeText(this,
-                                "验证成功!",
+                                "注册成功!",
                                 Toast.LENGTH_SHORT).show();
                         Intent intent1 = new Intent(this, LoginActivity.class);
                         intent1.putExtra("from", Configure.FROM_LOGIN_ACTIVITY);
                         startActivity(intent1);
                         this.finish();
                         break;
-                    } else {
+                    } else
+                        if("Username existed, register failed.".equals(result)){
                         Toast.makeText(this,
-                                "验证失败!",
+                                "用户名已存在，注册失败!",
                                 Toast.LENGTH_SHORT).show();
                     }
                     //  }

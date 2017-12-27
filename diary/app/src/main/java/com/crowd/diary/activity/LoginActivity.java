@@ -11,14 +11,15 @@ import android.widget.Toast;
 
 import com.crowd.diary.R;
 import com.crowd.diary.util.Configure;
+import com.crowd.diary.internet.Communicate;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+//import java.io.BufferedReader;
+//import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
+//import java.io.InputStreamReader;
+//import java.io.OutputStreamWriter;
+//import java.io.PrintWriter;
+//import java.net.Socket;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText nameEditText;
@@ -27,10 +28,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private SharedPreferences sharedPreferences;
     private Button linktoRegisterScreenButton;
 
-    private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
-    private String content;
+//    private Socket socket;
+//    private BufferedReader in;
+//    private PrintWriter out;
+    private String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,33 +75,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Thread conLogin = new Thread(){
                         public void run(){
                             try {
-                                socket = new Socket("123.207.97.94", 8888);
-                                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-                                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-                                        socket.getOutputStream())), true);
-                                out.write("login\n");
-
-                                out.write(loginName+"\n");
-                                //out.write("perfect\n");
-                                out.write(loginPassword+"\n");
-                                out.flush();
-
-                                while (true) {
-                                    if (socket.isConnected()) {
-                                        //Log.v("connect","OK");
-                                        if (!socket.isInputShutdown()) {
-                                            //Log.v("stream:","OK");
-                                            if ((content = in.readLine()) != null) {
-                                               // Log.v("get:",content);
-                                                //content += "\n";
-                                                out.write("bye\n");
-                                                out.flush();
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-
+//                                socket = new Socket("123.207.97.94", 8888);
+//                                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+//                                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+//                                        socket.getOutputStream())), true);
+//                                out.write("login\n");
+//
+//                                out.write(loginName+"\n");
+//                                //out.write("perfect\n");
+//                                out.write(loginPassword+"\n");
+//                                out.flush();
+//
+//                                while (true) {
+//                                    if (socket.isConnected()) {
+//                                        //Log.v("connect","OK");
+//                                        if (!socket.isInputShutdown()) {
+//                                            //Log.v("stream:","OK");
+//                                            if ((content = in.readLine()) != null) {
+//                                               // Log.v("get:",content);
+//                                                //content += "\n";
+//                                                out.write("bye\n");
+//                                                out.flush();
+//                                                break;
+//                                            }
+//                                        }
+//                                    }
+//
+                                Communicate communicate = new Communicate();
+                                result = communicate.loginToServer(loginName,loginPassword);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -111,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     while (conLogin.getState()!= Thread.State.TERMINATED);
                     //nameEditText.setText("get:"+content);
 
-                        if ("OK".equals(content)) {
+                        if ("Login success.".equals(result)) {
                             Toast.makeText(this,
                                     "验证成功!",
                                     Toast.LENGTH_SHORT).show();
@@ -120,11 +122,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             startActivity(intent);
                             this.finish();
                             break;
-                        } else {
-                            Toast.makeText(this,
-                                    "验证失败!",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                        } else
+                            if("Password error.".equals(result)) {
+                                Toast.makeText(this,
+                                        "验证失败!",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                if("User not exist.".equals(result)){
+                                    Toast.makeText(this,
+                                            "用户名不存在！",
+                                            Toast.LENGTH_SHORT).show();
+                            }
                   //  }
                 }
                 break;
