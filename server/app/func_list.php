@@ -11,22 +11,29 @@ function nameToID($username){
 }
 
 
-function userExisted($username){
+//function userExisted($username){
     // 查询用户名是否已存在，存在则返回True，不存在返回False
-}
+//}
 
-function addUser($username, $password){
+//function addUser($username, $password){
     // 新建用户
-}
+//}
 
-function passwordRight($username, $password){
+//function passwordRight($username, $password){
     // 查询用户密码是否正确，返回 True, False
-}  
+//}  
 
 function addNote($userid, $note, $bookname = NULL, $text = NULL){
-    // 添加: 返回bool
+    // 添加: 返回noteid
+}
+function deleteNote($noteid){
+    //删除给定id的笔记
+
 }
 
+function modifyNote($noteid, $note){
+    //将noteid对应笔记内容改为$note
+}
 function getMyNotes($userid){
     // 获取 userid全部的笔记
     //  
