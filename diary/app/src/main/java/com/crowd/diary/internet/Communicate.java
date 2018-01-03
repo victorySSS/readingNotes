@@ -14,20 +14,16 @@ import org.json.JSONObject;
 
 public class Communicate {
     String myUrl = "http://www.ludics.cn/app/";
-    
+
     /**
      * @作用 注册账号
      * @param username
      * @param password
-     * @return "Username existed, register failed." 
+     * @return "Username existed, register failed."
      * @return "Register success."
      * @throws IOException
      */
-<<<<<<< HEAD
     public String registerToServer(String username,String password) throws IOException{
-=======
-    public String register(String username,String password) throws IOException{
->>>>>>> c6dde10d7971eab5bc195553f607fadfd5b5ad2a
         OutputStreamWriter out = null;
         BufferedReader reader = null;
         String response="";
@@ -91,7 +87,7 @@ public class Communicate {
      * @作用 登录
      * @param username
      * @param password
-     * @return "Login success." 
+     * @return "Login success."
      * @return "Password error."
      * @return "User not exist."
      * @throws IOException
@@ -101,7 +97,7 @@ public class Communicate {
         BufferedReader reader = null;
         String response="";
         try {
-            
+
             URL httpUrl = null; //HTTP URL类 用这个类来创建连接
             //创建URL
             httpUrl = new URL(myUrl+"user_login.php");

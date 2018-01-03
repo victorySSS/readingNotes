@@ -21,6 +21,7 @@ import com.crowd.diary.database.DiaryDao;
 import com.crowd.diary.database.OpenHelper;
 import com.crowd.diary.entity.Diary;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
