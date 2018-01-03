@@ -30,7 +30,7 @@ try {
         myLOG("Successfully.");
     }
 } catch (PDOException $e){
-    LOG($sql . PHP_EOL . $e->getMessage());
+    myLOG($sql . PHP_EOL . $e->getMessage());
 }
 $conn = null;
 ?>

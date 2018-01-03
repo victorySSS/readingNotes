@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 public class Communicate {
     String myUrl = "http://www.ludics.cn/app/";
+    
 
     /**
      * @作用 注册账号
