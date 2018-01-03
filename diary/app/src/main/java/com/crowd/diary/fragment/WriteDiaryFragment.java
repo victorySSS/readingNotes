@@ -34,12 +34,12 @@ import com.crowd.diary.database.OpenHelper;
 import com.crowd.diary.entity.Diary;
 import com.crowd.diary.util.Configure;
 import com.crowd.diary.util.LocationUtil;
-import com.crowd.diary.util.Util;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+//import com.crowd.diary.util.Util;
+//
+//import java.io.File;
+//import java.io.FileNotFoundException;
+//import java.io.FileOutputStream;
+//import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

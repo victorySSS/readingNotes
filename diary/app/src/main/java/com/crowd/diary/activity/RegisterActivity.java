@@ -26,9 +26,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText registerNameEditText;
     private EditText registerPasswordEditText;
 
-//    private Socket socket;
-//    private BufferedReader in;
-//    private PrintWriter out;
     private String result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,32 +59,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     Thread conLogin = new Thread(){
                         public void run(){
                             try {
-//                                socket = new Socket("123.207.97.94", 8888);
-//                                in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-//                                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-//                                        socket.getOutputStream())), true);
-//                                out.write("login\n");
-//
-//                                out.write(registerName+"\n");
-//                                //out.write("perfect\n");
-//                                out.write(registerPassword+"\n");
-//                                out.flush();
-//
-//                                while (true) {
-//                                    if (socket.isConnected()) {
-//                                        //Log.v("connect","OK");
-//                                        if (!socket.isInputShutdown()) {
-//                                            //Log.v("stream:","OK");
-//                                            if ((content = in.readLine()) != null) {
-//                                                // Log.v("get:",content);
-//                                                //content += "\n";
-//                                                out.write("bye\n");
-//                                                out.flush();
-//                                                break;
-//                                            }
-//                                        }
-//                                    }
-//                                }
                                 Communicate communicate = new Communicate();
                                 result = communicate.registerToServer(registerName,registerPassword);
 

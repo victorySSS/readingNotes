@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> tabs = new ArrayList<>();
         tabs.add("写笔记");
-        tabs.add("笔记中心");
-        tabs.add("个人中心");
+        tabs.add("我的笔记");
+        tabs.add("笔记圈");
         FragmentAdapter fragmentAdapter = new FragmentAdapter(fragmentManager, fragments, tabs);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);

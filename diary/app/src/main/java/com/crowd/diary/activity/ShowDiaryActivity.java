@@ -1,23 +1,16 @@
 package com.crowd.diary.activity;
 
 import android.content.Intent;
-//import android.graphics.Bitmap;
-//import android.net.Uri;
-//import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-//import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.crowd.diary.R;
 import com.crowd.diary.entity.Diary;
 import com.crowd.diary.util.Configure;
-
-//import java.io.File;
-//import java.io.IOException;
 
 public class ShowDiaryActivity extends AppCompatActivity {
 
@@ -50,28 +43,6 @@ public class ShowDiaryActivity extends AppCompatActivity {
         showTextContent.setText(diary.getContent());
         TextView showTextComment = (TextView) findViewById(R.id.show_text_comment);
         showTextComment.setText(diary.getNote());
-
-//        ImageView image1 = (ImageView) findViewById(R.id.show_image1);
-//        ImageView image2 = (ImageView) findViewById(R.id.show_image2);
-//        ImageView image3 = (ImageView) findViewById(R.id.show_image3);
-//        ImageView image4 = (ImageView) findViewById(R.id.show_image4);
-//        ImageView[] imageViews = new ImageView[]{image1, image2, image3, image4};
-//
-//        String uris = diary.getUri();
-//        if (uris != null && !"".equals(uris)) {
-//            String[] uriArr = uris.split(";");
-//            for (int i = 0; i < uriArr.length; i++) {
-//                Bitmap bitmap = null;
-//                try {
-//                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(new File(uriArr[i])));
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                imageViews[i].setImageBitmap(bitmap);
-//                imageViews[i].setVisibility(View.VISIBLE);
-//            }
-//        }
-
         Button goBackButton = (Button) findViewById(R.id.go_to_list);
         goBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
