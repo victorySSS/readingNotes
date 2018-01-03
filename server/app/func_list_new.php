@@ -5,10 +5,9 @@ $host="localhost";
 $user="root";
 $pass="ludics";
 $dbName="Notes";
-$dir="/var/www/html/app/content/";
+$dir="/var/www/html/app/content/" ;
 
-/*
-function nameToID($username){
+/*function nameToID($username){
     $conn = mysqli_connect($host, $user, $pass, $dbName);
     if(! $conn )
     {
@@ -17,9 +16,9 @@ function nameToID($username){
     // 设置编码，防止中文乱码
     mysqli_query($conn , "set names utf8");
  
-    $sql = 'SELECT userID, userName
+    $sql = "SELECT userID, userName
             FROM User
-            WHERE userName = '$username';'
+            WHERE userName == '$username';'
  
     $retval = mysqli_query( $conn, $sql );
     if(! $retval )
@@ -34,8 +33,7 @@ function nameToID($username){
 
     return $id;
 }
-*/
-
+ */
 
 // function userExisted($username){
 //     // 查询用户名是否已存在，存在则返回True，不存在返回False
@@ -51,14 +49,21 @@ function nameToID($username){
 
 function addNote($userid, $note, $text = NULL, $bookname = NULL){
     // 添加: 返回noteid
-
+    //$ = '$note';
+    //$ = '$text';
+    $host="localhost";
+    $user="root";
+    $pass="ludics";
+    $dbname="Notes";
+    $dir="/var/www/html/app/content/" ;
+    $noteID = -1;
     try {
         $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $sql = "INSERT INTO Note
                 (userID, bookName, User_userID)
                 VALUES 
-                ('$userid', '$bookName', '$userid')";
+                ('$userid', '$bookname', '$userid')";
         $res = $conn->query($sql);
         $row = $res->fetchAll();
         //获取上一个插入笔记的ID
@@ -67,20 +72,17 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
             $res = $conn->query($sql);
             $rows = $res->fetchAll();
             $noteID = $rows[0];
-            echo $noteID;
             echo "Insertion succeeded.";
             myLOG("Insertion succeeded.");
         }
     } catch (PDOException $e){
         myLOG($sql . PHP_EOL . $e->getMessage());
     }
-    $noteAdd = "$dir.'note/'.$userid.'_'.$noteID.'.txt'";
-    $textAdd = "$dir.'text/'.$userid.'_'.$noteID.'.txt'";
-
+    
     //将笔记与原文分别保存
 
     //存笔记
-    @$fp=fopen($noteAdd,'a');
+    @$fp=fopen($dir."note/".$userid."_".$noteID.".txt",'a');
     flock($fp,LOCK_EX);
     if(!$fp){
         myLOG("Saving failed.");
@@ -91,7 +93,7 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
     fclose($fp);
 
     //存原文
-    @$fp=fopen($textAdd,'ab');
+    @$fp=fopen($dir."text/".$userid."_".$noteID.".txt",'ab');
     flock($fp,LOCK_EX);
     if(!$fp){
         myLOG("Saving failed.");
@@ -103,9 +105,9 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
 
     try {
         $sql = "UPDATE Note
-                SET noteAddress = '$noteAdd',
-                 textAddress = '$textAdd',
-                WHERE noteID = '$noteID'";
+                SET noteAddress = $dir.'note/'.$userid.'_'.$noteID.'.txt',
+                 textAddress = $dir.'text/'.$userid.'_'.$noteID.'.txt',
+                WHERE noteID = $noteID";
         $res = $conn->query($sql);
         $row = $res->fetchAll();
         if($row){
@@ -122,52 +124,24 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
 
 echo addNote(10, "我的笔记", "原文", "书名");
 
-function deleteNote($noteid){ 
+/*function deleteNote($noteid){ 
     //删除给定id的笔记
+    $conn = mysqli_connect($host, $user, $pass, $dbName);
+    if(! $conn )
+    {
+        myLOG('连接失败: ' . mysqli_error($conn));
+    }
+    // 设置编码，防止中文乱码
+    mysqli_query($conn , "set names utf8");
  
-    try {
-        $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "SELECT noteAddress, textAddress
-                FROM Note 
-                WHERE noteID = '$noteID';";
-        $res = $conn->query($sql);
-        $row = $res->fetchAll();
-    } catch (PDOException $e){
-        myLOG($sql . PHP_EOL . $e->getMessage());
-    }
+    $sql = 'DELETE FROM Note
+            WHERE noteID == $noteid;'
+ 
+    $retval = mysqli_query( $conn, $sql );
 
-    $noteAdd = $row['noteAddress'];
-    $textAdd = $row['textAddress'];
-
-    //删笔记
-    $rs = unlink($noteAdd);
-    if(!$rs){
-        myLOG("Deletion failed.");
-        exit;
-    }
-
-    //删原文
-    $rs = unlink($textAdd);
-    if(!$rs){
-        myLOG("Deletion failed.");
-        exit;
-    }
-
-    try {
-        $sql = "DELETE FROM Note
-                WHERE noteID = '$noteid';";
-        $res = $conn->query($sql);
-        if($row){
-            echo "Deletion succeeded.";
-            myLOG("Deletion succeeded.");
-        }
-    } catch (PDOException $e){
-        myLOG($sql . PHP_EOL . $e->getMessage());
-    }
-    $conn = null;
-
-    return $res;
+    mysqli_close($conn);
+    
+    return $retval;
 } 
  
 function modifyNote($noteid, $note){ 
@@ -245,5 +219,5 @@ function getOtherNotes($times){
     //返回所有符合条件note的数组
     return $row;
 }
-
+ */
 ?>
