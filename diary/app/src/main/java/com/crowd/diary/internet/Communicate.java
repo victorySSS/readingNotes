@@ -247,7 +247,7 @@ public class Communicate {
             // out.flush();
             // out.close();
 
-            System.out.println(conn.getResponseCode());
+            // System.out.println(conn.getResponseCode());
 
             // 请求返回的状态
             if (conn.getResponseCode() != 200){
@@ -340,7 +340,7 @@ public class Communicate {
             // out.flush();
             // out.close();
 
-            System.out.println(conn.getResponseCode());
+            // System.out.println(conn.getResponseCode());
 
             // 请求返回的状态
             if (conn.getResponseCode() != 200){
