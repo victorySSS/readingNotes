@@ -258,7 +258,7 @@ public class Communicate {
                 String lines;
                 while ((lines = reader.readLine()) != null) {
                     lines = new String(lines.getBytes(), "utf-8");
-                    System.out.println(lines);
+                    // System.out.println(lines);
                     re+=lines;
                 }
                 reader.close();
@@ -293,6 +293,95 @@ public class Communicate {
             }
         }
 
+        return response;
+    }
+    public int deleteNoteToServer(int noteID) throws IOException{
+        int response = -404;
+        String re = "";
+        OutputStreamWriter out = null;
+        BufferedReader reader = null;
+        try {
+            //JSONObject  obj = new JSONObject();
+            // Json build
+            JSONObject obj = new JSONObject();
+            obj.put("noteID", noteID);
+            
+            // 创建url资源
+            URL httpUrl = null; //HTTP URL类 用这个类来创建连
+            httpUrl = new URL(myUrl+"delete_note.php");
+            // 建立http连接
+            HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+            // 设置允许输出
+            conn.setDoOutput(true);            
+            conn.setDoInput(true);
+            // 设置不用缓存
+            conn.setUseCaches(false);
+            // 设置传递方式
+            conn.setRequestMethod("POST");
+            // 设置维持长连接
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            // 设置文件字符集:
+            conn.setRequestProperty("Charset", "UTF-8");
+            //转换为字节数组
+            byte[] data = (obj.toString()).getBytes();
+            // 设置文件长度
+            conn.setRequestProperty("Content-Length", String.valueOf(data.length));
+            // 设置文件类型:
+            conn.setRequestProperty("contentType", "application/json");
+            // 开始连接请求
+            conn.connect();
+
+            OutputStream os = conn.getOutputStream();
+            os.write(data);
+            os.flush();
+            // OutputStream  out = conn.getOutputStream();     
+            // 写入请求的字符串
+            // out.write((obj.toString()).getBytes());
+            // out.flush();
+            // out.close();
+
+            System.out.println(conn.getResponseCode());
+
+            // 请求返回的状态
+            if (conn.getResponseCode() != 200){
+                response = NOTCONNECT;
+            } else{
+                reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+                String lines;
+                while ((lines = reader.readLine()) != null) {
+                    lines = new String(lines.getBytes(), "utf-8");
+                    // System.out.println(lines);
+                    re+=lines;
+                }
+                reader.close();
+                // 断开连接
+                conn.disconnect();
+            }
+
+        } catch (Exception e) {
+            // System.out.println("发送 POST 请求出现异常！"+e);
+            e.printStackTrace();
+        }
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(reader!=null){
+                    reader.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+        if (re.contains("success")){
+            response = SUCCESS;
+        } else if (re.contains("fail")){
+            response = FAIL;
+        }
         return response;
     }
 }
