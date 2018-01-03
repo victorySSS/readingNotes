@@ -49,8 +49,8 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
                 activity,
                 dataList,
                 R.layout.diary_item,
-                new String[]{"title", "date"},
-                new int[]{R.id.item_title, R.id.item_date});
+                new String[]{"title", "content","note"},
+                new int[]{R.id.item_title, R.id.item_content, R.id.item_note});
         listView.setAdapter(simpleAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -79,7 +79,8 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
         for (Diary diary : diaryList) {
             Map<String, String> map = new HashMap<>();
             map.put("title", diary.getTitle());
-            map.put("date", diary.getDate());
+            map.put("content", diary.getContent());
+            map.put("note",diary.getNote());
             dataList.add(map);
         }
     }
