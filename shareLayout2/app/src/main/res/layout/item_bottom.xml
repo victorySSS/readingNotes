@@ -14,13 +14,13 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white">
 
-        <ImageButton
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="48dp"
-            android:src="@android:drawable/ic_media_play"
-            android:background="@android:color/transparent"
-            android:id="@+id/button1"/>
+        <!--<ImageButton-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:src="@android:drawable/ic_media_play"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:id="@+id/button1"/>-->
 
         <ImageButton
             android:layout_width="0dp"
