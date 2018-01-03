@@ -15,19 +15,27 @@ import org.json.JSONObject;
 public class Communicate {
     String myUrl = "http://www.ludics.cn/app/";
     
+    public static final int USEREXIST = -1;
+    public static final int NOTEXIST = -2;
+    public static final int PSWDERR = -3;
+    public static final int NOTCONNECT = -404;
+    public static final int FAIL = -4;
+    public static final int SUCCESS = -5;
 
+    // Logger log = new Logger(this.getClass());//初始化日志类
     /**
-     * @作用 注册账号
+     * @作用 使用urlconnection
      * @param username
      * @param password
-     * @return "Username existed, register failed."
-     * @return "Register success."
+     * @return 
      * @throws IOException
-     */
-    public String registerToServer(String username,String password) throws IOException{
+     */ 
+    
+    public int registerToServer(String username,String password) throws IOException{
         OutputStreamWriter out = null;
         BufferedReader reader = null;
-        String response="";
+        int response = -404;
+        String re = "";
         try {
             URL httpUrl = null; //HTTP URL类 用这个类来创建连接
             //创建URL
@@ -51,16 +59,22 @@ public class Communicate {
             os.write(data.getBytes());
             os.flush();
             //读取响应
-            reader = new BufferedReader(new InputStreamReader(
+            System.out.println(conn.getResponseCode());
+            if (conn.getResponseCode() != 200){
+                response = NOTCONNECT;
+            } else{
+                reader = new BufferedReader(new InputStreamReader(
                     conn.getInputStream()));
-            String lines;
-            while ((lines = reader.readLine()) != null) {
-                lines = new String(lines.getBytes(), "utf-8");
-                response+=lines;
+                String lines;
+                while ((lines = reader.readLine()) != null) {
+                    lines = new String(lines.getBytes(), "utf-8");
+                    re+=lines;
+                    // System.out.println(lines);
+                }
+                reader.close();
+                // 断开连接
+                conn.disconnect();
             }
-            reader.close();
-            // 断开连接
-            conn.disconnect();
             // System.out.println(response.toString());
             // log.info(response.toString());
         } catch (Exception e) {
@@ -81,7 +95,17 @@ public class Communicate {
                 ex.printStackTrace();
             }
         }
-
+        
+        if (re.contains("existed")) 
+            response = USEREXIST;
+        else if (re.contains("userID")){
+            try{
+                JSONObject obj = new JSONObject(re);
+                response = obj.getInt("userID");
+            }catch (JSONException ex){
+                ex.printStackTrace();
+            }
+        }
         return response;
     }
     /**
