@@ -5,6 +5,7 @@ $host="localhost";
 $user="root";
 $pass="ludics";
 $dbName="Notes";
+$dir="/var/www/html/app/content/" ;
 
 function nameToID($username){
     $conn = mysqli_connect($host, $user, $pass, $dbName);
@@ -17,7 +18,7 @@ function nameToID($username){
  
     $sql = 'SELECT userID, userName
             FROM User
-            WHERE userName == $username;'
+            WHERE userName == '$username';'
  
     $retval = mysqli_query( $conn, $sql );
     if(! $retval )
@@ -48,36 +49,70 @@ function nameToID($username){
 
 function addNote($userid, $note, $text = NULL, $bookname = NULL){
     // 添加: 返回noteid
-    $conn = mysqli_connect($host, $user, $pass, $dbName);
-    if(! $conn )
-    {
-        myLOG('连接失败: ' . mysqli_error($conn));
-    }
-    // 设置编码，防止中文乱码
-    mysqli_query($conn , "set names utf8");
- 
     //$ = '$note';
     //$ = '$text';
- 
-    $sql = "INSERT INTO Note".
-            "(userID, noteAddress, textAddress, bookName) ".
-            "VALUES ".
-            "('$userid','$note', '$text', '$bookName')";
 
-    $retval = mysqli_query( $conn, $sql );
-    if(! $retval )
-    {
-    myLOG('无法插入数据: ' . mysqli_error($conn));
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "INSERT INTO Note
+                (userID, bookName, User_userID)
+                VALUES 
+                ('$userid', '$bookName', '$userid')";
+        $res = $conn->query($sql);
+        $row = $res->fetchAll();
+        //获取上一个插入笔记的ID
+        if($row){
+            $sql = "SELECT last_insert_id();";
+            $res = $conn->query($sql);
+            $rows = $res->fetchAll();
+            $noteID = $rows[0];
+            echo "Insertion succeeded.";
+            myLOG("Insertion succeeded.");
+        }
+    } catch (PDOException $e){
+        myLOG($sql . PHP_EOL . $e->getMessage());
     }
-
-    //获取上一个插入笔记的ID
-    $sql = "SELECT last_insert_id();";
-
-    $retval = mysqli_query( $conn, $sql );
-    $rows = mysql_fetch_row( $retval );
-    $noteID = $rows[0];
     
-    mysqli_close($conn);
+    //将笔记与原文分别保存
+
+    //存笔记
+    @$fp=fopen($dir."note/".$userid."_".$noteID.".txt",'a');
+    flock($fp,LOCK_EX);
+    if(!$fp){
+        myLOG("Saving failed.");
+        exit;
+    }
+    fwrite($fp,$note,strlen($note));
+    flock($fp,LOCK_UN);
+    fclose($fp);
+
+    //存原文
+    @$fp=fopen($dir."text/".$userid."_".$noteID.".txt",'ab');
+    flock($fp,LOCK_EX);
+    if(!$fp){
+        myLOG("Saving failed.");
+        exit;
+    }
+    fwrite($fp,$text,strlen($text));
+    flock($fp,LOCK_UN);
+    fclose($fp);
+
+    try {
+        $sql = "UPDATE Note
+                SET noteAddress = $dir.'note/'.$userid.'_'.$noteID.'.txt',
+                 textAddress = $dir.'text/'.$userid.'_'.$noteID.'.txt',
+                WHERE noteID = $noteID";
+        $res = $conn->query($sql);
+        $row = $res->fetchAll();
+        if($row){
+            echo "Insertion succeeded.";
+            myLOG("Insertion succeeded.");
+        }
+    } catch (PDOException $e){
+        myLOG($sql . PHP_EOL . $e->getMessage());
+    }
+    $conn = null;
 
     return $noteID;
 }
