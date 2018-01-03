@@ -117,6 +117,8 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
     return $noteID;
 }
 
+echo addNote(10, "我的笔记", "原文", "书名");
+
 function deleteNote($noteid){ 
     //删除给定id的笔记
     $conn = mysqli_connect($host, $user, $pass, $dbName);
