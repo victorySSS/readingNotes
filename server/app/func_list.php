@@ -91,7 +91,7 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
     fclose($fp);
 
     //存原文
-    @$fp=fopen($textAdd,'ab');
+    @$fp=fopen($textAdd,'a');
     flock($fp,LOCK_EX);
     if(!$fp){
         myLOG("Saving failed.");
@@ -126,7 +126,6 @@ function deleteNote($noteid){
     $user="root";
     $pass="ludics";
     $dbName="Notes";
-    $dir="/var/www/html/app/content/";
 
     try {
         $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
@@ -173,14 +172,13 @@ function deleteNote($noteid){
     return $res;
 } 
 
-/*
+
 function modifyNote($noteid, $note){ 
     //将noteid对应笔记内容改为$note
     $host="localhost";
     $user="root";
     $pass="ludics";
     $dbName="Notes";
-    $dir="/var/www/html/app/content/";
 
     try {
         $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
@@ -197,7 +195,7 @@ function modifyNote($noteid, $note){
     $noteAdd = $row['noteAddress'];
     $textAdd = $row['textAddress'];
 
-    @$fp=fopen($noteAdd,'a');
+    @$fp=fopen($noteAdd,'w');
     flock($fp,LOCK_EX);
     if(!$fp){
         myLOG("Saving failed.");
@@ -208,7 +206,7 @@ function modifyNote($noteid, $note){
     fclose($fp);
 
     //存原文
-    @$fp=fopen($textAdd,'ab');
+    @$fp=fopen($textAdd,'w');
     flock($fp,LOCK_EX);
     if(!$fp){
         myLOG("Saving failed.");
@@ -219,8 +217,6 @@ function modifyNote($noteid, $note){
     fclose($fp);
 
     $conn = null;
-
-    return $res;
 }
 */
 
@@ -236,10 +232,13 @@ function getMyNotes($userid){
         $conn = new PDO("mysql:host=$host; dbname=$dbname", $user, $pass);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = "SELECT * FROM Note
-                WHERE userID == '$userid';";
-        $res = $conn->query($sql);
-        $row = $res->fetchAll();
+        $sql = "SELECT userID, noteAddress, textAddress, bookName
+                FROM Note
+                WHERE userID = :id;";
+        $stmt = $conn->prepare($sql);
+        $params = array('id' => $userid);
+        $stmt->execute($params);
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e){
         myLOG($sql . PHP_EOL . $e->getMessage());
     }
@@ -255,19 +254,21 @@ function getOtherNotes($times){
     $user="root";
     $pass="ludics";
     $dbName="Notes";
-    $dir="/var/www/html/app/content/";
     
     try {
         $conn = new PDO("mysql:host=$host; dbname=$dbname", $user, $pass);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $stmt = $conn->prepare('SELECT * FROM Persons ORDER BY noteID LIMIT (?, ?)');
-        $stmt->bind_param("ii", $start, $end);
-
+        
+        $sql = "SELECT * FROM Notes ORDER BY noteID LIMIT :start, :end";
+        $stmt = $conn->prepare($sql);
         $start = (int)(10*$times);
         $end = (int)(10*($times+1)-1);
-        $res = $stmt->execute();
-        $row = $res->fetchAll();
+        $params = array(
+            'start' => $start,
+            'end' => $end
+        );
+        $stmt->execute($params);
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e){
         myLOG($sql . PHP_EOL . $e->getMessage());
     }
