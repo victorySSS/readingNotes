@@ -15,6 +15,13 @@ import org.json.JSONObject;
 public class Communicate {
     String myUrl = "http://www.ludics.cn/app/";
     
+    public static final int USEREXIST = -1;
+    public static final int NOTEXIST = -2;
+    public static final int PSWDERR = -3;
+    public static final int NOTCONNECT = -404;
+    public static final int FAIL = -4;
+    public static final int SUCCESS = -5;
+    
     /**
      * @作用 注册账号
      * @param username
