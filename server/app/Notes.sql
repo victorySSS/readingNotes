@@ -8,8 +8,7 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema Notes
--- -----------------------------------------------------
+-- Schema Notes-- -----------------------------------------------------
 
 -- -----------------------------------------------------
 -- Schema Notes
@@ -33,8 +32,7 @@ CREATE TABLE IF NOT EXISTS `Notes`.`Note` (
   `userID` INT UNSIGNED NOT NULL,
   `noteID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `noteAddress` VARCHAR(255) NOT NULL,
-  `textAddress` VARCHAR(255) NULL,
-  `bookName` VARCHAR(100) NULL,
+  `textAddress` VARCHAR(255) NULL,  `bookName` VARCHAR(100) NULL,
   `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `totalLikes` INT UNSIGNED NOT NULL DEFAULT 0,
   `totalComments` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -42,13 +40,7 @@ CREATE TABLE IF NOT EXISTS `Notes`.`Note` (
   `NoteList_noteID` INT UNSIGNED NOT NULL,
   `User_userID` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`noteID`),
-  INDEX `fk_Note_NoteList1_idx` (`NoteList_noteID` ASC),
   INDEX `fk_Note_User1_idx` (`User_userID` ASC),
-  CONSTRAINT `fk_Note_NoteList1`
-    FOREIGN KEY ( `NoteList_noteID`)
-    REFERENCES `Notes`.`NoteList` ( `noteID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_Note_User1`
     FOREIGN KEY (`User_userID`)
     REFERENCES `Notes`.`User` (`userID`)
@@ -68,13 +60,7 @@ CREATE TABLE IF NOT EXISTS `Notes`.`User` (
   `create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   `Note_userID` INT UNSIGNED NOT NULL,
   `Note_noteID` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`userID`),
-  INDEX `fk_User_Note1_idx` (`Note_noteID` ASC),
-  CONSTRAINT `fk_User_Note1`
-    FOREIGN KEY (`Note_noteID`)
-    REFERENCES `Notes`.`Note` (`noteID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
+  PRIMARY KEY (`userID`);
 
 
 -- -----------------------------------------------------
