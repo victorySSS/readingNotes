@@ -3,13 +3,13 @@ include 'header.php';
 $host = "localhost";
 $user = "root";
 $pass = "ludics";
-$dbname = "Notes";
+$dbname = "myDB";
 
 $userName = $_POST['userName'];
 $userPassword = $_POST['userPassword'];
 myLOG("Username: " . $userName );
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
+    $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $sql = "SELECT 1 FROM User WHERE userName = '$userName' limit 1";
  
@@ -26,23 +26,11 @@ try {
             values 
             ('$userName', '$userPassword')"; 
         $conn->exec($sql);
-        //echo "Register success.";
-        $sql = "SELECT userID, userName
-            FROM User
-            WHERE userName = '$userName'";
-        $res = $conn->query($sql);
-        $row = $res->fetchAll();
-        $userID = $row[0]['userID'];
-        $obj->userID = $userID;
-        $obj->userName = $userName;
-        $data = json_encode($obj);
-        //$data = addslashes($data);
-        echo $data;
-        myLOG($data);
+        echo "Register success.";
         myLOG("Successfully.");
     }
 } catch (PDOException $e){
-    myLOG($sql . PHP_EOL . $e->getMessage());
+    LOG($sql . PHP_EOL . $e->getMessage());
 }
 $conn = null;
 ?>
