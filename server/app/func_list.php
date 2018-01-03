@@ -1,11 +1,6 @@
 <?php
 include 'header.php';
 
-$host="localhost";
-$user="root";
-$pass="ludics";
-$dbName="Notes";
-$dir="/var/www/html/app/content/";
 
 /*
 function nameToID($username){
@@ -51,7 +46,12 @@ function nameToID($username){
 
 function addNote($userid, $note, $text = NULL, $bookname = NULL){
     // 添加: 返回noteid
-
+    $host="localhost";
+    $user="root";
+    $pass="ludics";
+    $dbName="Notes";
+    $dir="/var/www/html/app/content/";
+    
     try {
         $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -120,11 +120,14 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
     return $noteID;
 }
 
-echo addNote(10, "我的笔记", "原文", "书名");
-
 function deleteNote($noteid){ 
     //删除给定id的笔记
- 
+    $host="localhost";
+    $user="root";
+    $pass="ludics";
+    $dbName="Notes";
+    $dir="/var/www/html/app/content/";
+
     try {
         $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -169,79 +172,107 @@ function deleteNote($noteid){
 
     return $res;
 } 
- 
+
+/*
 function modifyNote($noteid, $note){ 
     //将noteid对应笔记内容改为$note
-    $conn = mysqli_connect($host, $user, $pass, $dbName);
-    if(! $conn )
-    {
-        myLOG('连接失败: ' . mysqli_error($conn));
+    $host="localhost";
+    $user="root";
+    $pass="ludics";
+    $dbName="Notes";
+    $dir="/var/www/html/app/content/";
+
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "SELECT noteAddress, textAddress
+                FROM Note 
+                WHERE noteID = '$noteID';";
+        $res = $conn->query($sql);
+        $row = $res->fetchAll();
+    } catch (PDOException $e){
+        myLOG($sql . PHP_EOL . $e->getMessage());
     }
-    // 设置编码，防止中文乱码
-    mysqli_query($conn , "set names utf8");
- 
-    //$newNoteAdd = 
 
-    $sql = 'UPDATE Note
-            SET noteAddress = "$note"
-            WHERE noteID == $noteid;'
- 
-    $retval = mysqli_query( $conn, $sql );
+    $noteAdd = $row['noteAddress'];
+    $textAdd = $row['textAddress'];
 
-    mysqli_close($conn);
-    
-    return $retval;
+    @$fp=fopen($noteAdd,'a');
+    flock($fp,LOCK_EX);
+    if(!$fp){
+        myLOG("Saving failed.");
+        exit;
+    }
+    fwrite($fp,$note,strlen($note));
+    flock($fp,LOCK_UN);
+    fclose($fp);
+
+    //存原文
+    @$fp=fopen($textAdd,'ab');
+    flock($fp,LOCK_EX);
+    if(!$fp){
+        myLOG("Saving failed.");
+        exit;
+    }
+    fwrite($fp,$text,strlen($text));
+    flock($fp,LOCK_UN);
+    fclose($fp);
+
+    $conn = null;
+
+    return $res;
 }
+*/
 
 function getMyNotes($userid){
-    // 获取 userid全部的笔记
-    $conn = mysqli_connect($host, $user, $pass, $dbName);
-    if(! $conn )
-    {
-        myLOG('连接失败: ' . mysqli_error($conn));
-    }
-    // 设置编码，防止中文乱码
-    mysqli_query($conn , "set names utf8");
- 
-    $sql = 'SELECT * FROM Note
-            WHERE userID == $userid;'
- 
-    $retval = mysqli_query( $conn, $sql );
-    if(! $retval )
-    {
-        myLOG('无法读取数据: ' . mysqli_error($conn));
-    }
-    $row = mysqli_fetch_array($retval, MYSQLI_ASSOC);
-    mysqli_close($conn);
+    // 获取userid对应全部的笔记
+    $host="localhost";
+    $user="root";
+    $pass="ludics";
+    $dbName="Notes";
+    $dir="/var/www/html/app/content/";
     
+    try {
+        $conn = new PDO("mysql:host=$host; dbname=$dbname", $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = "SELECT * FROM Note
+                WHERE userID == '$userid';";
+        $res = $conn->query($sql);
+        $row = $res->fetchAll();
+    } catch (PDOException $e){
+        myLOG($sql . PHP_EOL . $e->getMessage());
+    }
+    $conn = null;
+
     //返回所有符合条件note的数组
     return $row;
 }
 
 function getOtherNotes($times){
     // 获取 10*$times ~ 10*($times+1)-1 项笔记内容
-    $conn = mysqli_connect($host, $user, $pass, $dbName);
-    if(! $conn )
-    {
-        myLOG('连接失败: ' . mysqli_error($conn));
-    }
-    // 设置编码，防止中文乱码
-    mysqli_query($conn , "set names utf8");
-
-    $stmt = $conn->prepare('SELECT * FROM Persons ORDER BY noteID LIMIT (?, ?)');
-    $stmt->bind_param("ii", $start, $end);
-
-    $start = (int)(10*$times);
-    $end = (int)(10*($times+1)-1);
-    $retval = $stmt->execute();
-    if(! $retval )
-    {
-        myLOG('无法读取数据: ' . mysqli_error($conn));
-    }
-    $row = mysqli_fetch_array($retval, MYSQLI_ASSOC))
+    $host="localhost";
+    $user="root";
+    $pass="ludics";
+    $dbName="Notes";
+    $dir="/var/www/html/app/content/";
     
-    mysqli_close($conn);
-    
+    try {
+        $conn = new PDO("mysql:host=$host; dbname=$dbname", $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $stmt = $conn->prepare('SELECT * FROM Persons ORDER BY noteID LIMIT (?, ?)');
+        $stmt->bind_param("ii", $start, $end);
+
+        $start = (int)(10*$times);
+        $end = (int)(10*($times+1)-1);
+        $res = $stmt->execute();
+        $row = $res->fetchAll();
+    } catch (PDOException $e){
+        myLOG($sql . PHP_EOL . $e->getMessage());
+    }
+    $conn = null;
+
     //返回所有符合条件note的数组
     return $row;
 }
