@@ -5,8 +5,9 @@ $host="localhost";
 $user="root";
 $pass="ludics";
 $dbName="Notes";
-$dir="/var/www/html/app/content/" ;
+$dir="/var/www/html/app/content/";
 
+/*
 function nameToID($username){
     $conn = mysqli_connect($host, $user, $pass, $dbName);
     if(! $conn )
@@ -18,7 +19,7 @@ function nameToID($username){
  
     $sql = 'SELECT userID, userName
             FROM User
-            WHERE userName == '$username';'
+            WHERE userName = '$username';'
  
     $retval = mysqli_query( $conn, $sql );
     if(! $retval )
@@ -33,6 +34,7 @@ function nameToID($username){
 
     return $id;
 }
+*/
 
 
 // function userExisted($username){
@@ -49,8 +51,6 @@ function nameToID($username){
 
 function addNote($userid, $note, $text = NULL, $bookname = NULL){
     // 添加: 返回noteid
-    //$ = '$note';
-    //$ = '$text';
 
     try {
         $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
@@ -119,22 +119,50 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
 
 function deleteNote($noteid){ 
     //删除给定id的笔记
-    $conn = mysqli_connect($host, $user, $pass, $dbName);
-    if(! $conn )
-    {
-        myLOG('连接失败: ' . mysqli_error($conn));
+ 
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = "SELECT noteAddress, textAddress
+                FROM Note 
+                WHERE noteID = '$noteID';";
+        $res = $conn->query($sql);
+        $row = $res->fetchAll();
+    } catch (PDOException $e){
+        myLOG($sql . PHP_EOL . $e->getMessage());
     }
-    // 设置编码，防止中文乱码
-    mysqli_query($conn , "set names utf8");
- 
-    $sql = 'DELETE FROM Note
-            WHERE noteID == $noteid;'
- 
-    $retval = mysqli_query( $conn, $sql );
 
-    mysqli_close($conn);
+    $noteAdd = $row['noteAddress'];
+    $textAdd = $row['textAddress'];
+
+    //删笔记
+    $rs = unlink($noteAdd);
+    if(!$rs){
+        myLOG("Deletion failed.");
+        exit;
+    }
+
+    //删原文
+    $rs = unlink($textAdd);
+    if(!$rs){
+        myLOG("Deletion failed.");
+        exit;
+    }
+
+    try {
+        $sql = "DELETE FROM Note
+                WHERE noteID = '$noteid';";
+        $res = $conn->query($sql);
+        if($row){
+            echo "Deletion succeeded.";
+            myLOG("Deletion succeeded.");
+        }
+    } catch (PDOException $e){
+        myLOG($sql . PHP_EOL . $e->getMessage());
+    }
+    $conn = null;
     
-    return $retval;
+    return $res;
 } 
  
 function modifyNote($noteid, $note){ 
