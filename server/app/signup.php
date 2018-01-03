@@ -29,6 +29,7 @@ try {
         echo "Register success.";
         myLOG("Successfully.");
     }
+    
 } catch (PDOException $e){
     myLOG($sql . PHP_EOL . $e->getMessage());
 }

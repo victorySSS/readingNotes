@@ -112,17 +112,17 @@ public class Communicate {
      * @作用 登录
      * @param username
      * @param password
-     * @return "Login success."
-     * @return "Password error."
-     * @return "User not exist."
+     * @return "Username existed, register failed." 
+     * @return "Register success."
      * @throws IOException
      */
-    public String loginToServer(String username, String password) throws IOException{
+
+    public int loginToServer(String username, String password) throws IOException{
         OutputStreamWriter out = null;
         BufferedReader reader = null;
-        String response="";
+        int response= -404;
+        String re = "";
         try {
-
             URL httpUrl = null; //HTTP URL类 用这个类来创建连接
             //创建URL
             httpUrl = new URL(myUrl+"user_login.php");
@@ -145,16 +145,21 @@ public class Communicate {
             os.write(data.getBytes());
             os.flush();
             //读取响应
-            reader = new BufferedReader(new InputStreamReader(
+            if (conn.getResponseCode() != 200){
+                response = NOTCONNECT;
+            } else{
+                reader = new BufferedReader(new InputStreamReader(
                     conn.getInputStream()));
-            String lines;
-            while ((lines = reader.readLine()) != null) {
-                lines = new String(lines.getBytes(), "utf-8");
-                response+=lines;
+                String lines;
+                while ((lines = reader.readLine()) != null) {
+                    lines = new String(lines.getBytes(), "utf-8");
+                    re+=lines;
+                    System.out.println(lines);
+                }
+                reader.close();
+                // 断开连接
+                conn.disconnect();
             }
-            reader.close();
-            // 断开连接
-            conn.disconnect();
             // System.out.println(response.toString());
             // log.info(response.toString());
         } catch (Exception e) {
@@ -175,7 +180,18 @@ public class Communicate {
                 ex.printStackTrace();
             }
         }
-
+        if (re.contains("error")) 
+            response = PSWDERR;
+        else if (re.contains("not"))
+            response = NOTEXIST;
+        else if (re.contains("userID")){
+            try{
+                JSONObject obj = new JSONObject(re);
+                response = obj.getInt("userID");
+            }catch (JSONException ex){
+                ex.printStackTrace();
+            }
+        }
         return response;
     }
 }
