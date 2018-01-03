@@ -67,17 +67,20 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
             $res = $conn->query($sql);
             $rows = $res->fetchAll();
             $noteID = $rows[0];
+            echo $noteID;
             echo "Insertion succeeded.";
             myLOG("Insertion succeeded.");
         }
     } catch (PDOException $e){
         myLOG($sql . PHP_EOL . $e->getMessage());
     }
-    
+    $noteAdd = "$dir.'note/'.$userid.'_'.$noteID.'.txt'";
+    $textAdd = "$dir.'text/'.$userid.'_'.$noteID.'.txt'";
+
     //将笔记与原文分别保存
 
     //存笔记
-    @$fp=fopen($dir."note/".$userid."_".$noteID.".txt",'a');
+    @$fp=fopen($noteAdd,'a');
     flock($fp,LOCK_EX);
     if(!$fp){
         myLOG("Saving failed.");
@@ -88,7 +91,7 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
     fclose($fp);
 
     //存原文
-    @$fp=fopen($dir."text/".$userid."_".$noteID.".txt",'ab');
+    @$fp=fopen($textAdd,'ab');
     flock($fp,LOCK_EX);
     if(!$fp){
         myLOG("Saving failed.");
@@ -100,9 +103,9 @@ function addNote($userid, $note, $text = NULL, $bookname = NULL){
 
     try {
         $sql = "UPDATE Note
-                SET noteAddress = $dir.'note/'.$userid.'_'.$noteID.'.txt',
-                 textAddress = $dir.'text/'.$userid.'_'.$noteID.'.txt',
-                WHERE noteID = $noteID";
+                SET noteAddress = '$noteAdd',
+                 textAddress = '$textAdd',
+                WHERE noteID = '$noteID'";
         $res = $conn->query($sql);
         $row = $res->fetchAll();
         if($row){
@@ -161,7 +164,7 @@ function deleteNote($noteid){
         myLOG($sql . PHP_EOL . $e->getMessage());
     }
     $conn = null;
-    
+
     return $res;
 } 
  
