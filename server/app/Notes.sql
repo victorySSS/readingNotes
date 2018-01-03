@@ -8,9 +8,6 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema Notes-- -----------------------------------------------------
-
--- -----------------------------------------------------
 -- Schema Notes
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `Notes` DEFAULT CHARACTER SET utf8 ;
@@ -28,40 +25,35 @@ CREATE TABLE IF NOT EXISTS `Notes`.`NoteList` (
 -- -----------------------------------------------------
 -- Table `Notes`.`Note`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Notes`.`Note` (
-  `userID` INT UNSIGNED NOT NULL,
-  `noteID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `noteAddress` VARCHAR(255) NOT NULL,
-  `textAddress` VARCHAR(255) NULL,  `bookName` VARCHAR(100) NULL,
-  `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `totalLikes` INT UNSIGNED NOT NULL DEFAULT 0,
-  `totalComments` INT UNSIGNED NOT NULL DEFAULT 0,
-  `NoteList_userID` INT UNSIGNED NOT NULL,
-  `NoteList_noteID` INT UNSIGNED NOT NULL,
-  `User_userID` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`noteID`),
-  INDEX `fk_Note_User1_idx` (`User_userID` ASC),
-  CONSTRAINT `fk_Note_User1`
-    FOREIGN KEY (`User_userID`)
-    REFERENCES `Notes`.`User` (`userID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
-
+CREATE TABLE IF NOT EXISTS `Notes`.`Note` ( 
+  `userID` INT UNSIGNED NOT NULL, 
+  `noteID` INT UNSIGNED NOT NULL AUTO_INCREMENT, 
+  `noteAddress` VARCHAR(255) NOT NULL, 
+  `textAddress` VARCHAR(255) NULL,
+  `bookName` VARCHAR(100) NULL, 
+  `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  `totalLikes` INT UNSIGNED NOT NULL DEFAULT 0, 
+  `totalComments` INT UNSIGNED NOT NULL DEFAULT 0, 
+  `User_userID` INT UNSIGNED NOT NULL, 
+  PRIMARY KEY (`noteID`), 
+  INDEX `fk_Note_User1_idx` (`User_userID` ASC), 
+  CONSTRAINT `fk_Note_User1` 
+    FOREIGN KEY (`User_userID`) 
+    REFERENCES `Notes`.`User` (`userID`) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION); 
 
 -- -----------------------------------------------------
 -- Table `Notes`.`User`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Notes`.`User` (
   `userID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `userName` VARCHAR(16) NOT NULL,
+  `userName` VARCHAR(16) NOT NULL UNIQUE,
   `userPassword` VARCHAR(32) NOT NULL,
   `userNickname` VARCHAR(16) NULL,
   `userPortrait` VARCHAR(255) NULL,
   `create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `Note_userID` INT UNSIGNED NOT NULL,
-  `Note_noteID` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`userID`);
-
+  PRIMARY KEY (`userID`));
 
 -- -----------------------------------------------------
 -- Table `Notes`.`Comment`
@@ -72,7 +64,6 @@ CREATE TABLE IF NOT EXISTS `Notes`.`Comment` (
   `comFromID` INT UNSIGNED NOT NULL,
   `comToID` INT UNSIGNED NOT NULL,
   `commentText` VARCHAR(255) NOT NULL,
-  `Note_userID` INT UNSIGNED NOT NULL,
   `Note_noteID` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`noteID`),
   INDEX `fk_Comment_Note1_idx` (`Note_noteID` ASC),
