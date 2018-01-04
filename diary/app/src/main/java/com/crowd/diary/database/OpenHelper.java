@@ -16,9 +16,9 @@ public class OpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " +
-                "diary (diary_id INTEGER primary key autoincrement," +
-                "userID int(6), bookName varchar(64)," +
-                "uri varchar(64),content varchar(1024), note varchar(1024))");
+                "diary(diary_id INTEGER primary key autoincrement," +
+                "userID varchar(6), title varchar(64)," +
+                "uri varchar(64),content varchar(1024),note varchar(1024))");
     }
 
     @Override

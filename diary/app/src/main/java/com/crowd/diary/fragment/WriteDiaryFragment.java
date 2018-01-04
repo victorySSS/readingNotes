@@ -1,6 +1,7 @@
 package com.crowd.diary.fragment;
 
 //import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.os.Message;
 //import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,12 +36,14 @@ import com.crowd.diary.database.OpenHelper;
 import com.crowd.diary.entity.Diary;
 import com.crowd.diary.util.Configure;
 import com.crowd.diary.util.LocationUtil;
+import com.crowd.diary.activity.LoginActivity;
+import com.crowd.diary.internet.Communicate;
 //import com.crowd.diary.util.Util;
 //
 //import java.io.File;
 //import java.io.FileNotFoundException;
 //import java.io.FileOutputStream;
-//import java.io.IOException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -74,13 +78,26 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
     private String uriList = "";
     private Diary diary;
 
+    private int result;
+    private int userID;
+//    private int userId;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.write_diary, container, false);
+        Bundle bundle=this.getArguments();
+        userID=Integer.parseInt(bundle.getString("userId"));
         initView(view);
         return view;
     }
+
+//    @Override
+//    public void onAttach(Activity activity){
+//        super.onAttach(activity);
+//        userId=((MainActivity)activity).getUserId();
+//    }
 
     @Override
     public void onResume() {
@@ -171,6 +188,17 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
 //                break;
 //            case 205:
 //                addContentDialog.dismiss();
+//        int result;
+//        LoginActivity loginActivity = new LoginActivity();
+//        Communicate communicate = new Communicate();
+//        final String text = textNote.getText().toString();
+//        final String boolName = title.getText().toString();
+//        final String content = textContent.getText().toString();
+//        try{
+//            result = communicate.addNoteToServer(loginActivity.userID, text, boolName, content);
+//        } catch(IOException e){
+//            e.printStackTrace();
+//        }
                 if (saveToSQLite()) {
                     Intent intent = new Intent(activity, ShowDiaryActivity.class);
                     Bundle bundle = new Bundle();
@@ -185,18 +213,46 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
 
     private boolean saveToSQLite() {
         diary = new Diary();
+        diary.setUserId(userID);
         diary.setContent(textContent.getText().toString());
         diary.setNote(textNote.getText().toString());
-        if (title.getText().toString() == null || "".equals(title.getText().toString())) {
-            diary.setTitle("无题");
-        } else {
-            diary.setTitle(title.getText().toString());
-        }
-        diary.setDate(date.getText().toString());
-        diary.setAddress(address.getText().toString());
-        diary.setAuthor(activity.getSharedPreferences("user",
-                Context.MODE_PRIVATE).getString("name", ""));
+        diary.setTitle(title.getText().toString());
+//        if (title.getText().toString() == null || "".equals(title.getText().toString())) {
+//            diary.setTitle("无题");
+//        } else {
+//            diary.setTitle(title.getText().toString());
+//        }
+//        diary.setDate(date.getText().toString());
+//        diary.setAddress(address.getText().toString());
+//        diary.setAuthor(activity.getSharedPreferences("user",
+//                Context.MODE_PRIVATE).getString("name", ""));
         diary.setUri(uriList);
+
+//        final int userId = userID;
+        final String text = textNote.getText().toString();
+        final String bookName = title.getText().toString();
+        final String content = textContent.getText().toString();
+
+        Thread conLogin = new Thread(){
+            public void run(){
+                try {
+                    Communicate communicate = new Communicate();
+                    result = communicate.addNoteToServer(userID, text, bookName, content);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        conLogin.start();
+//        try{
+//            int b=1;
+//            Communicate communicate = new Communicate();
+//            result = communicate.addNoteToServer(loginActivity.userID, text, boolName, content);
+//            int a=1;
+//        } catch(IOException e){
+//            e.printStackTrace();
+//        }
+
         OpenHelper openHelper = new OpenHelper(activity);
         SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
         DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
@@ -204,6 +260,28 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
         sqLiteDatabase.close();
         return flag;
     }
+//    private boolean saveToSQLite() {
+//        LoginActivity loginActivity=new LoginActivity();
+//
+//    diary = new Diary();
+//    diary.setContent(textContent.getText().toString());
+//    if (title.getText().toString() == null || "".equals(title.getText().toString())) {
+//        diary.setTitle("无题");
+//    } else {
+//        diary.setTitle(title.getText().toString());
+//    }
+////    diary.setDate(date.getText().toString());
+////    diary.setAddress(address.getText().toString());
+//    diary.setAuthor(activity.getSharedPreferences("user",
+//            Context.MODE_PRIVATE).getString("name", ""));
+//    diary.setUri(uriList);
+//    OpenHelper openHelper = new OpenHelper(activity);
+//    SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
+//    DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
+//    boolean flag = diaryDao.insert(diary);
+//    sqLiteDatabase.close();
+//    return flag;
+//}
 
 //    private void addImageToLinearLayout(Bitmap bitmap) {
 //        switch (imageCount) {

@@ -35,10 +35,10 @@ public class ShowDiaryActivity extends AppCompatActivity {
         }
         TextView showTitle = (TextView) findViewById(R.id.show_title);
         showTitle.setText(diary.getTitle());
-        TextView showAddress = (TextView) findViewById(R.id.show_address);
-        showAddress.setText(diary.getAddress());
-        TextView showDate = (TextView) findViewById(R.id.show_date);
-        showDate.setText(diary.getDate());
+//        TextView showAddress = (TextView) findViewById(R.id.show_address);
+//        showAddress.setText(diary.getAddress());
+//        TextView showDate = (TextView) findViewById(R.id.show_date);
+//        showDate.setText(diary.getDate());
         TextView showTextContent = (TextView) findViewById(R.id.show_text_content);
         showTextContent.setText(diary.getContent());
         TextView showTextComment = (TextView) findViewById(R.id.show_text_comment);

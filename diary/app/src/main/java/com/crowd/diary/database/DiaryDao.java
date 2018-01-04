@@ -18,10 +18,11 @@ public class DiaryDao {
 
     public boolean insert(Diary diary) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("author", diary.getAuthor());
+//        contentValues.put("author", diary.getAuthor());
         contentValues.put("title", diary.getTitle());
-        contentValues.put("date", diary.getDate());
-        contentValues.put("address", diary.getAddress());
+//        contentValues.put("note",diary.getNote());
+//        contentValues.put("date", diary.getDate());
+//        contentValues.put("address", diary.getAddress());
         contentValues.put("uri", diary.getUri());
         contentValues.put("content", diary.getContent());
         contentValues.put("note",diary.getNote());
@@ -47,10 +48,10 @@ public class DiaryDao {
 
     public boolean update(Diary diary) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("author", diary.getAuthor());
+//        contentValues.put("author", diary.getAuthor());
         contentValues.put("title", diary.getTitle());
-        contentValues.put("date", diary.getDate());
-        contentValues.put("address", diary.getAddress());
+//        contentValues.put("date", diary.getDate());
+//        contentValues.put("address", diary.getAddress());
         contentValues.put("uri", diary.getUri());
         contentValues.put("content", diary.getContent());
         int updateResult = db.update("diary", contentValues, "diary_id=?",
@@ -67,13 +68,16 @@ public class DiaryDao {
                 null, null, null, null);
         while (cursor.moveToNext()) {
             Diary diary = new Diary();
+
             diary.setDiaryId(cursor.getInt(0));
-            diary.setTitle(cursor.getString(1));
-            diary.setAuthor(cursor.getString(2));
-            diary.setDate(cursor.getString(3));
-            diary.setAddress(cursor.getString(4));
-            diary.setUri(cursor.getString(5));
-            diary.setContent(cursor.getString(6));
+            diary.setUserId(cursor.getInt(1));
+            diary.setTitle(cursor.getString(2));
+//            diary.setAuthor(cursor.getString(2));
+//            diary.setDate(cursor.getString(3));
+//            diary.setAddress(cursor.getString(4));
+            diary.setUri(cursor.getString(3));
+            diary.setContent(cursor.getString(4));
+            diary.setNote(cursor.getString(5));
             diaryList.add(diary);
         }
         return diaryList;

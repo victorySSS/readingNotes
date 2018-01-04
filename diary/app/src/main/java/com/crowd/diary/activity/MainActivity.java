@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.crowd.diary.R;
 import com.crowd.diary.adapter.FragmentAdapter;
 import com.crowd.diary.fragment.ListDiaryFragment;
-import com.crowd.diary.fragment.PersonFragment;
+import com.crowd.diary.fragment.OtherListDiaryFragment;
 import com.crowd.diary.fragment.WriteDiaryFragment;
 import com.crowd.diary.util.Configure;
 
@@ -22,6 +22,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private long exitTime = 0;
     private int fromWhich = 0;
+    private int userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +34,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         fromWhich = getIntent().getIntExtra("from", 0);
+        userID= getIntent().getIntExtra("userId", 0);
     }
 
     private void initViewForFragment() {
+        WriteDiaryFragment writeDiaryFragment =WriteDiaryFragment.newInstance(this);
+        ListDiaryFragment listDiaryFragment = ListDiaryFragment.newInstance(this);
+        OtherListDiaryFragment otherListDiaryFragment = OtherListDiaryFragment.newInstance(this);
+        Bundle bundle = new Bundle();
+        bundle.putString("userId",Integer.toString(userID));
+        writeDiaryFragment.setArguments(bundle);
+        listDiaryFragment.setArguments(bundle);
+        otherListDiaryFragment.setArguments(bundle);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(WriteDiaryFragment.newInstance(this));
-        fragments.add(ListDiaryFragment.newInstance(this));
-        fragments.add(PersonFragment.newInstance(this));
+        fragments.add(writeDiaryFragment);
+        fragments.add(listDiaryFragment);
+        fragments.add(otherListDiaryFragment);
 
         List<String> tabs = new ArrayList<>();
         tabs.add("写笔记");
@@ -70,4 +81,9 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
+//    public int getUserId(){
+//        return userID;
+//    }
 }

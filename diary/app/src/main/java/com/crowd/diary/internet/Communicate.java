@@ -643,44 +643,44 @@ public class Communicate {
         return response;
     }
 
-    public void test(){
-        Communicate test = new Communicate();
-        username = "ludi130";
-        password = "ludi123";
-        // getOtherNotesFromServer 演示
-        try{
-            
-            
-            for (int i = 1; i < 4; i++){
-                String re = test.getOtherNotesFromServer(i);
-                try{
-                    JSONObject jo = new JSONObject(re);
-                    System.out.println(jo.get("text"));
-
-                }catch(JSONException ex){
-                    ex.printStackTrace();
-                }
-                System.out.println(re);
-            }
-
-            // get self 演示
-            // 先使用getSelfCNT 获得自己的笔记的数量，再依次从服务器取回笔记
-            int re = test.getSelfCNT(userID);
-            for (int i = 1; i <= re; i++){
-                String res = test.getSelfNotesFromServer(userID, i);
-                try{
-                    JSONObject jo = new JSONObject(res);
-                    System.out.println(jo.get("text"));
-
-                }catch(JSONException ex){
-                    ex.printStackTrace();
-                }
-                // System.out.println(re);
-            }
-
-
-        } catch(IOException ex){
-            ex.printStackTrace();
-        } 
-    }
+//    public void test(){
+//        Communicate test = new Communicate();
+//        String username = "ludi130";
+//        String password = "ludi123";
+//        // getOtherNotesFromServer 演示
+//        try{
+//
+//
+//            for (int i = 1; i < 4; i++){
+//                String re = test.getOtherNotesFromServer(i);
+//                try{
+//                    JSONObject jo = new JSONObject(re);
+//                    System.out.println(jo.get("text"));
+//
+//                }catch(JSONException ex){
+//                    ex.printStackTrace();
+//                }
+//                System.out.println(re);
+//            }
+//
+//            // get self 演示
+//            // 先使用getSelfCNT 获得自己的笔记的数量，再依次从服务器取回笔记
+//            int re = test.getSelfCNT(userID);
+//            for (int i = 1; i <= re; i++){
+//                String res = test.getSelfNotesFromServer(userID, i);
+//                try{
+//                    JSONObject jo = new JSONObject(res);
+//                    System.out.println(jo.get("text"));
+//
+//                }catch(JSONException ex){
+//                    ex.printStackTrace();
+//                }
+//                // System.out.println(re);
+//            }
+//
+//
+//        } catch(IOException ex){
+//            ex.printStackTrace();
+//        }
+//    }
 }

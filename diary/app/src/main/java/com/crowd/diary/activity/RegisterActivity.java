@@ -26,7 +26,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText registerNameEditText;
     private EditText registerPasswordEditText;
 
-    private String result;
+    private int result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +71,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     while (conLogin.getState()!= Thread.State.TERMINATED);
                     //nameEditText.setText("get:"+content);
-
-                    if ("Register success.".equals(result)) {
+                    if(result==Communicate.USEREXIST){
+                        Toast.makeText(this,
+                                "用户名已存在，注册失败!",
+                                Toast.LENGTH_SHORT).show();
+                    }else{
                         Toast.makeText(this,
                                 "注册成功!",
                                 Toast.LENGTH_SHORT).show();
@@ -81,12 +84,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         startActivity(intent1);
                         this.finish();
                         break;
-                    } else
-                        if("Username existed, register failed.".equals(result)){
-                        Toast.makeText(this,
-                                "用户名已存在，注册失败!",
-                                Toast.LENGTH_SHORT).show();
                     }
+
+//                    if ("Register success.".equals(result)) {
+//                        Toast.makeText(this,
+//                                "注册成功!",
+//                                Toast.LENGTH_SHORT).show();
+//                        Intent intent1 = new Intent(this, LoginActivity.class);
+//                        intent1.putExtra("from", Configure.FROM_LOGIN_ACTIVITY);
+//                        startActivity(intent1);
+//                        this.finish();
+//                        break;
+//                    } else
+//                        if("Username existed, register failed.".equals(result)){
+//                        Toast.makeText(this,
+//                                "用户名已存在，注册失败!",
+//                                Toast.LENGTH_SHORT).show();
+//                    }
                     //  }
                 break;
                 }
