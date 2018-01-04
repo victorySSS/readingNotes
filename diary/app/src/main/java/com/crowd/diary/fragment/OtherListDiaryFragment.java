@@ -32,7 +32,6 @@ import java.util.Map;
 
 import org.json.JSONObject;
 import org.json.JSONException;
-import org.json.JSONArray;
 
 public class OtherListDiaryFragment extends Fragment implements AdapterView.OnItemLongClickListener {
     private static AppCompatActivity activity;
@@ -41,8 +40,6 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
     private OpenHelper openHelper;
     private List<Diary> diaryList;
     private String result;
-    private Map<String,String> map = new HashMap<>();
-    private JSONArray jsonArray = new JSONArray();
     private Diary diary;
     private int userID;
 
@@ -50,9 +47,11 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle bundle=this.getArguments();
-        userID=Integer.parseInt(bundle.getString("userId"));
-        initData();
+        Bundle bundle = this.getArguments();
+        userID = Integer.parseInt(bundle.getString("userId"));
+        if (saveToSQLte()) {
+            initData();
+        }
         View view = inflater.inflate(R.layout.list_diary, container, false);
         initView(view);
         return view;
@@ -84,17 +83,17 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
     }
 
     private void initData() {
-        Thread conLogin = new Thread() {
-            public void run() {
-                try {
-                    Communicate communicate = new Communicate();
-                    result = communicate.getOtherNotesFromServer(5);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        conLogin.start();
+//        Thread conLogin = new Thread() {
+//            public void run() {
+//                try {
+//                    Communicate communicate = new Communicate();
+//                    result = communicate.getSelfNotesFromServer(20,5);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//        conLogin.start();
 //
 //        try{
 //                    JSONObject jo = new JSONObject(result);
@@ -109,7 +108,14 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //        diary.setUserId(userID);
 //        try{
 //            JSONObject jsonObject = new JSONObject(result);
-//            System.out.println(jsonObject.get("text"));
+//            int userId = jsonObject.getInt("userId");
+//            diary.setUserId(userId);
+//            String bookName = jsonObject.getString("bookName");
+//            diary.setTitle(bookName);
+//            String text = jsonObject.getString("text");
+//            diary.setContent(text);
+//            String note = jsonObject.getString("note");
+//            diary.setNote(note);
 //        }catch (JSONException e){
 //            e.printStackTrace();
 //        }
@@ -117,6 +123,7 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
         openHelper = new OpenHelper(activity);
         SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
         DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
+//        boolean flag = diaryDao.insert(diary);
         diaryList = diaryDao.queryAll();
         sqLiteDatabase.close();
 
@@ -187,7 +194,7 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
         return true;
     }
 
-//    private boolean saveToSQLite() {
+    //    private boolean saveToSQLite() {
 //        diary = new Diary();
 //        diary.setUserId(userID);
 //        diary.setContent(textContent.getText().toString());
@@ -212,4 +219,51 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //        sqLiteDatabase.close();
 //        return flag;
 //    }
+    private boolean saveToSQLte() {
+        Thread conLogin = new Thread() {
+            public void run() {
+                try {
+                    Communicate communicate = new Communicate();
+                    result = communicate.getSelfNotesFromServer(20, 5);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        conLogin.start();
+//
+//        try{
+//                    JSONObject jo = new JSONObject(result);
+//                    System.out.println(jo.get("text"));
+//
+//                }catch(JSONException ex){
+//                    ex.printStackTrace();
+//                }
+//                System.out.println(result);
+////
+        diary = new Diary();
+        diary.setUserId(userID);
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            int userId = jsonObject.getInt("userId");
+            diary.setUserId(userId);
+            String bookName = jsonObject.getString("bookName");
+            diary.setTitle(bookName);
+            String text = jsonObject.getString("text");
+            diary.setContent(text);
+            String note = jsonObject.getString("note");
+            diary.setNote(note);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        openHelper = new OpenHelper(activity);
+        SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
+        DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
+        boolean flag = diaryDao.insert(diary);
+        diaryList = diaryDao.queryAll();
+        sqLiteDatabase.close();
+
+        return flag;
+    }
 }
