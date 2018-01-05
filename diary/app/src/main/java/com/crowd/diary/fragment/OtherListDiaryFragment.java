@@ -140,7 +140,14 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
                 Map<String, String> map = new HashMap<>();
                 map.put("title", diary.getTitle());
                 map.put("content", diary.getContent());
-                dataList.add(map);
+
+                boolean isHave=false;
+                for(Map<String,String> tmp : dataList){
+                    if(tmp.equals(map)) isHave=true;
+                }
+
+                if(!isHave)
+                    dataList.add(map);
             }
         }
 //        dataList = new ArrayList<>();

@@ -95,7 +95,15 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
                 Map<String, String> map = new HashMap<>();
                 map.put("title", diary.getTitle());
                 map.put("content", diary.getContent());
-                dataList.add(map);
+
+                //Map<String,String>tmp =new HashMap<>();
+                boolean isHave=false;
+                for(Map<String,String> tmp : dataList){
+                    if(tmp.equals(map)) isHave=true;
+                }
+
+                if(!isHave)
+                    dataList.add(map);
             }
         }
     }
