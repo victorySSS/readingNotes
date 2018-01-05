@@ -236,7 +236,7 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //    }
     private boolean saveToSQLte() {
         boolean flag = true;
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i < 5; i++) {
             final int s = i;
             Thread conLogin = new Thread() {
                 public void run() {
