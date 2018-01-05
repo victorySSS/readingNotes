@@ -73,6 +73,7 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("diary", diaryList.get(position));
                 intent.putExtras(bundle);
+                intent.putExtra("userId",userID);
                 activity.startActivity(intent);
                 activity.finish();
             }
@@ -193,6 +194,8 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
                 diary.setContent(text);
                 String note = jsonObject.getString("note");
                 diary.setNote(note);
+                int noteID=jsonObject.getInt("noteID");
+                diary.setDiaryId(noteID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -200,10 +203,17 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
             openHelper = new OpenHelper(activity);
             SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
             DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
-            flag = diaryDao.insert(diary);
+            List<Diary> existedDiary=diaryDao.queryAll();
+            int haveE=0;
+            for(int j=0;j<existedDiary.size();j++){
+                if(existedDiary.get(j).getDiaryId()==diary.getDiaryId()) haveE++;
+            }
+            if(haveE==0)
+                flag = diaryDao.insert(diary);
+//            flag = diaryDao.insert(diary);
 //            diaryList = diaryDao.queryAll();
             sqLiteDatabase.close();
         }
-        return flag;
+        return true;
     }
 }

@@ -15,6 +15,7 @@ import com.crowd.diary.util.Configure;
 public class ShowDiaryActivity extends AppCompatActivity {
 
     private Diary diary;
+    private int userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,7 @@ public class ShowDiaryActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        userID = getIntent().getIntExtra("userId",0);
         Bundle bundle = getIntent().getExtras();
         diary = (Diary) bundle.getSerializable("diary");
     }
@@ -63,6 +65,7 @@ public class ShowDiaryActivity extends AppCompatActivity {
     private void goMainActivity() {
         Intent intent = new Intent(ShowDiaryActivity.this, MainActivity.class);
         intent.putExtra("from", Configure.FROM_SHOW_DIARY_ACTIVITY);
+        intent.putExtra("userId",userID);
         startActivity(intent);
         finish();
     }

@@ -9,4 +9,5 @@ public class Configure {
     public static final int CAMERA_PERMISSION_CODE = 1006;
     public static final int FROM_SHOW_DIARY_ACTIVITY = 1007;
     public static final int FROM_LOGIN_ACTIVITY = 1008;
+    public static final int FROM_MAIN_ACTIVITY = 1009;
 }

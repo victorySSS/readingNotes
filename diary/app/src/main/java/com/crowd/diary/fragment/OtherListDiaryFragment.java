@@ -23,6 +23,7 @@ import com.crowd.diary.database.DiaryDao;
 import com.crowd.diary.database.OpenHelper;
 import com.crowd.diary.entity.Diary;
 import com.crowd.diary.internet.Communicate;
+import com.crowd.diary.util.Configure;
 //import com.crowd.diary.internet.JSONParse;
 
 import java.io.IOException;
@@ -76,6 +77,8 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
                 Intent intent = new Intent(activity, ShowDiaryActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("diary", diaryList.get(position));
+                intent.putExtra("from", Configure.FROM_MAIN_ACTIVITY);
+                intent.putExtra("userId",userID);
                 intent.putExtras(bundle);
                 activity.startActivity(intent);
                 activity.finish();
