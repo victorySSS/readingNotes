@@ -62,7 +62,7 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
                 activity,
                 dataList,
                 R.layout.diary_item,
-                new String[]{"title", "date"},
+                new String[]{"title", "content"},
                 new int[]{R.id.item_title, R.id.item_date});
         listView.setAdapter(simpleAdapter);
 
@@ -93,7 +93,7 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
             if (diary.getUserId() == userID) {
                 Map<String, String> map = new HashMap<>();
                 map.put("title", diary.getTitle());
-//            map.put("date", diary.getDate());
+                map.put("content", diary.getContent());
                 dataList.add(map);
             }
         }

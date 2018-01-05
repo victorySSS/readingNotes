@@ -66,7 +66,7 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
                 activity,
                 dataList,
                 R.layout.diary_item,
-                new String[]{"title", "date"},
+                new String[]{"title", "content"},
                 new int[]{R.id.item_title, R.id.item_date});
         listView.setAdapter(simpleAdapter);
 
@@ -136,7 +136,7 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
             if(diary.getUserId()!=userID){
                 Map<String, String> map = new HashMap<>();
                 map.put("title", diary.getTitle());
-//            map.put("date", diary.getDate());
+                map.put("content", diary.getContent());
                 dataList.add(map);
             }
         }
@@ -254,8 +254,10 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //            diary.setUserId(userID);
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                String userId = jsonObject.getString("userID");
-                int user_Id = Integer.parseInt(userId);
+//                String userId = jsonObject.getString("userID");
+
+//                int user_Id = Integer.parseInt(userId);
+                int user_Id=jsonObject.getInt("userID");
                 diary.setUserId(user_Id);
                 String bookName = jsonObject.getString("bookName");
                 diary.setTitle(bookName);
