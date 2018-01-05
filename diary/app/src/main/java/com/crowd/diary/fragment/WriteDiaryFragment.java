@@ -204,6 +204,7 @@ public class WriteDiaryFragment extends Fragment implements View.OnClickListener
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("diary", diary);
                     intent.putExtras(bundle);
+                    intent.putExtra("userId",userID);
                     startActivity(intent);
                     activity.finish();
                 }
