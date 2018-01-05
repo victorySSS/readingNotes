@@ -23,7 +23,7 @@ import com.crowd.diary.database.DiaryDao;
 import com.crowd.diary.database.OpenHelper;
 import com.crowd.diary.entity.Diary;
 import com.crowd.diary.internet.Communicate;
-import com.crowd.diary.internet.JSONParse;
+//import com.crowd.diary.internet.JSONParse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +43,8 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
     private String result;
     private Diary diary;
     private int userID;
+
+//    private int times=1;
 
 
     @Override
@@ -222,12 +224,13 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //    }
     private boolean saveToSQLte() {
         boolean flag = true;
-        for (int i = 0; i < 10; i++) {
+        for (int i = 1; i < 50; i++) {
+            final int s = i;
             Thread conLogin = new Thread() {
                 public void run() {
                     try {
                         Communicate communicate = new Communicate();
-                        result = communicate.getSelfNotesFromServer(20,5);
+                        result = communicate.getSelfNotesFromServer(20,s);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -249,9 +252,9 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
             diary.setUserId(userID);
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                String userId = jsonObject.getString("userId");
-                int user_Id = Integer.parseInt(userId);
-                diary.setUserId(user_Id);
+//                String userId = jsonObject.getString("userId");
+//                int user_Id = Integer.parseInt(userId);
+//                diary.setUserId(user_Id);
                 String bookName = jsonObject.getString("bookName");
                 diary.setTitle(bookName);
                 String text = jsonObject.getString("text");
@@ -266,10 +269,24 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
             SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
             DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
             flag = diaryDao.insert(diary);
-            diaryList = diaryDao.queryAll();
+//            diaryList = diaryDao.queryAll();
             sqLiteDatabase.close();
         }
         return flag;
     }
 
+//    private boolean clearData() {
+//        openHelper = new OpenHelper(activity);
+//        SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
+//        DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
+////        boolean flag = diaryDao.insert(diary);
+//        diaryList = diaryDao.queryAll();
+//        sqLiteDatabase.close();
+//
+//
+////        dataList = new ArrayList<>();
+//        for (Diary diary : diaryList) {
+//            diaryDao.delete(diary);
+//        }
+//    }
 }
