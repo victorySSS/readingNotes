@@ -19,6 +19,7 @@ public class DiaryDao {
     public boolean insert(Diary diary) {
         ContentValues contentValues = new ContentValues();
 //        contentValues.put("author", diary.getAuthor());
+        contentValues.put("userID",diary.getUserId());
         contentValues.put("title", diary.getTitle());
 //        contentValues.put("note",diary.getNote());
 //        contentValues.put("date", diary.getDate());

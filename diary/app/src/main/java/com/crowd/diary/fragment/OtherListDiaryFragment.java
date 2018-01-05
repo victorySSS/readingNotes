@@ -133,10 +133,12 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 
         dataList = new ArrayList<>();
         for (Diary diary : diaryList) {
-            Map<String, String> map = new HashMap<>();
-            map.put("title", diary.getTitle());
+            if(diary.getUserId()!=userID){
+                Map<String, String> map = new HashMap<>();
+                map.put("title", diary.getTitle());
 //            map.put("date", diary.getDate());
-            dataList.add(map);
+                dataList.add(map);
+            }
         }
 //        dataList = new ArrayList<>();
 //        Map<String,String> map = new HashMap<>();
@@ -224,13 +226,13 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //    }
     private boolean saveToSQLte() {
         boolean flag = true;
-        for (int i = 1; i < 50; i++) {
+        for (int i = 1; i < 10; i++) {
             final int s = i;
             Thread conLogin = new Thread() {
                 public void run() {
                     try {
                         Communicate communicate = new Communicate();
-                        result = communicate.getSelfNotesFromServer(20,s);
+                        result = communicate.getOtherNotesFromServer(s);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -249,12 +251,12 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //                System.out.println(result);
 ////
             diary = new Diary();
-            diary.setUserId(userID);
+//            diary.setUserId(userID);
             try {
                 JSONObject jsonObject = new JSONObject(result);
-//                String userId = jsonObject.getString("userId");
-//                int user_Id = Integer.parseInt(userId);
-//                diary.setUserId(user_Id);
+                String userId = jsonObject.getString("userID");
+                int user_Id = Integer.parseInt(userId);
+                diary.setUserId(user_Id);
                 String bookName = jsonObject.getString("bookName");
                 diary.setTitle(bookName);
                 String text = jsonObject.getString("text");

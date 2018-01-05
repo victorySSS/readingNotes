@@ -23,6 +23,10 @@ import com.crowd.diary.entity.Diary;
 import com.crowd.diary.internet.Communicate;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +38,19 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
     private SimpleAdapter simpleAdapter;
     private OpenHelper openHelper;
     private List<Diary> diaryList;
+    private int userID;
+    private Diary diary;
+    private String result;
+    private int times;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        initData();
+        Bundle bundle = this.getArguments();
+        userID = Integer.parseInt(bundle.getString("userId"));
+        if(saveToSQLte()) {
+            initData();
+        }
         View view = inflater.inflate(R.layout.list_diary, container, false);
         initView(view);
         return view;
@@ -78,10 +90,12 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
 
         dataList = new ArrayList<>();
         for (Diary diary : diaryList) {
-            Map<String, String> map = new HashMap<>();
-            map.put("title", diary.getTitle());
+            if (diary.getUserId() == userID) {
+                Map<String, String> map = new HashMap<>();
+                map.put("title", diary.getTitle());
 //            map.put("date", diary.getDate());
-            dataList.add(map);
+                dataList.add(map);
+            }
         }
     }
 
@@ -114,5 +128,82 @@ public class ListDiaryFragment extends Fragment implements AdapterView.OnItemLon
                 .setNegativeButton("否", null)
                 .show();
         return true;
+    }
+
+    private boolean saveToSQLte() {
+        boolean flag = true;
+        Thread conLogin = new Thread() {
+            public void run() {
+                try {
+                    Communicate communicate = new Communicate();
+                    times = communicate.getSelfCNT(userID);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        conLogin.start();
+        while (conLogin.getState() != Thread.State.TERMINATED) ;
+//        Thread conLogin1 = new Thread() {
+//            public void run() {
+//                try {
+//                    Communicate communicate = new Communicate();
+//                    result = communicate.getSelfNotesFromServer(20,s);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//        conLogin1.start();
+        while (conLogin.getState() != Thread.State.TERMINATED) ;
+        for (int i = 1; i < times; i++) {
+            final int s = i;
+            Thread conLogin1 = new Thread() {
+                public void run() {
+                    try {
+                        Communicate communicate = new Communicate();
+                        result = communicate.getSelfNotesFromServer(userID,s);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            conLogin1.start();
+            while (conLogin1.getState() != Thread.State.TERMINATED) ;
+//
+//        try{
+//                    JSONObject jo = new JSONObject(result);
+//                    System.out.println(jo.get("text"));
+//
+//                }catch(JSONException ex){
+//                    ex.printStackTrace();
+//                }
+//                System.out.println(result);
+////
+            diary = new Diary();
+//            diary.setUserId(userID);
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                String userId = jsonObject.getString("userID");
+                int user_Id = Integer.parseInt(userId);
+                diary.setUserId(user_Id);
+                String bookName = jsonObject.getString("bookName");
+                diary.setTitle(bookName);
+                String text = jsonObject.getString("text");
+                diary.setContent(text);
+                String note = jsonObject.getString("note");
+                diary.setNote(note);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            openHelper = new OpenHelper(activity);
+            SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
+            DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
+            flag = diaryDao.insert(diary);
+//            diaryList = diaryDao.queryAll();
+            sqLiteDatabase.close();
+        }
+        return flag;
     }
 }
