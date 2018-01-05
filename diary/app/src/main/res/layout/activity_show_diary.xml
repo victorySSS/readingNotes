@@ -133,6 +133,9 @@
                 <!--android:text="感想"-->
                 <!--android:textColor="#FFFFFF"/>-->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+            <TextView
                 android:id="@+id/show_text_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
