@@ -1,5 +1,6 @@
 package com.crowd.diary.fragment;
 
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -220,17 +221,20 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //        return flag;
 //    }
     private boolean saveToSQLte() {
-        Thread conLogin = new Thread() {
-            public void run() {
-                try {
-                    Communicate communicate = new Communicate();
-                    result = communicate.getSelfNotesFromServer(20, 5);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        boolean flag = true;
+        for (int i = 0; i < 10; i++) {
+            Thread conLogin = new Thread() {
+                public void run() {
+                    try {
+                        Communicate communicate = new Communicate();
+                        result = communicate.getSelfNotesFromServer(20,5);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        };
-        conLogin.start();
+            };
+            conLogin.start();
+            while (conLogin.getState() != Thread.State.TERMINATED) ;
 //
 //        try{
 //                    JSONObject jo = new JSONObject(result);
@@ -241,29 +245,31 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
 //                }
 //                System.out.println(result);
 ////
-        diary = new Diary();
-        diary.setUserId(userID);
-        try {
-            JSONObject jsonObject = new JSONObject(result);
-            int userId = jsonObject.getInt("userId");
-            diary.setUserId(userId);
-            String bookName = jsonObject.getString("bookName");
-            diary.setTitle(bookName);
-            String text = jsonObject.getString("text");
-            diary.setContent(text);
-            String note = jsonObject.getString("note");
-            diary.setNote(note);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            diary = new Diary();
+            diary.setUserId(userID);
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                String userId = jsonObject.getString("userId");
+                int user_Id = Integer.parseInt(userId);
+                diary.setUserId(user_Id);
+                String bookName = jsonObject.getString("bookName");
+                diary.setTitle(bookName);
+                String text = jsonObject.getString("text");
+                diary.setContent(text);
+                String note = jsonObject.getString("note");
+                diary.setNote(note);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            openHelper = new OpenHelper(activity);
+            SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
+            DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
+            flag = diaryDao.insert(diary);
+            diaryList = diaryDao.queryAll();
+            sqLiteDatabase.close();
         }
-
-        openHelper = new OpenHelper(activity);
-        SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
-        DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
-        boolean flag = diaryDao.insert(diary);
-        diaryList = diaryDao.queryAll();
-        sqLiteDatabase.close();
-
         return flag;
     }
+
 }
