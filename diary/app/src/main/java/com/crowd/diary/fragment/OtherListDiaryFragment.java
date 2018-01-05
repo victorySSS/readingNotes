@@ -265,6 +265,8 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
                 diary.setContent(text);
                 String note = jsonObject.getString("note");
                 diary.setNote(note);
+                int noteID=jsonObject.getInt("noteID");
+                diary.setDiaryId(noteID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -272,11 +274,18 @@ public class OtherListDiaryFragment extends Fragment implements AdapterView.OnIt
             openHelper = new OpenHelper(activity);
             SQLiteDatabase sqLiteDatabase = openHelper.getReadableDatabase();
             DiaryDao diaryDao = new DiaryDao(sqLiteDatabase);
-            flag = diaryDao.insert(diary);
+            List<Diary> existedDiary=diaryDao.queryAll();
+            int haveE=0;
+            for(int j=0;j<existedDiary.size();j++){
+                if(existedDiary.get(j).getDiaryId()==diary.getDiaryId()) haveE++;
+            }
+            if(haveE==0)
+                flag = diaryDao.insert(diary);
 //            diaryList = diaryDao.queryAll();
             sqLiteDatabase.close();
         }
-        return flag;
+//        return flag;
+        return true;
     }
 
 //    private boolean clearData() {
